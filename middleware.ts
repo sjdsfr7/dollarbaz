@@ -1,20 +1,20 @@
-import { updateSession } from "@/lib/supabase/middleware";
-import { type NextRequest } from "next/server";
+import { NextRequest, NextResponse } from 'next/server'; // Correct import
+import { updateSession } from '@/lib/supabase/middleware'; // Ensure correct import path
 
 export async function middleware(request: NextRequest) {
-  return await updateSession(request);
+  try {
+    // Calling the updateSession to refresh or validate the session
+    const response = await updateSession(request);
+    console.log('Session updated: ', response);
+
+    // Proceed with further logic after session is updated
+    return response;
+  } catch (error) {
+    console.error('Middleware session error: ', error);
+    return NextResponse.redirect(new URL('/login', request.url));
+  }
 }
 
 export const config = {
-  matcher: [
-    /*
-     * Match all request paths except:
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
-     * - images - .svg, .png, .jpg, .jpeg, .gif, .webp
-     * Feel free to modify this pattern to include more paths.
-     */
-    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
-  ],
+  matcher: ['/((?!api|_next/static|_next/image|favicon.ico|login).*)'],
 };

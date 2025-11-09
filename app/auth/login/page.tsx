@@ -22,7 +22,7 @@ export default function LoginPage() {
 
         {/* This is the link below the card, now centered */}
         <p className="text-steel-400 mt-6">
-          Don't have an account?{' '}
+          Don&#39;t have an account?{' '}
           <Link
             href="/auth/sign-up"
             className="text-copper-300 font-medium hover:text-fog-50 transition-colors"
