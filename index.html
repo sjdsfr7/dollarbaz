@@ -1,0 +1,1487 @@
+<!doctype html>
+<html lang="en">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dollarbaz - Your 10-second money cockpit for EU/UK teams</title>
+  <script src="/_sdk/element_sdk.js"></script>
+  <style>
+        body {
+            box-sizing: border-box;
+        }
+
+        :root {
+            --ink-900: #1C1E1F;
+            --ink-700: #2B3B43;
+            --steel-600: #5B5B5A;
+            --steel-400: #9F9F9D;
+            --fog-50: #E2E1DC;
+            --aqua-600: #326D88;
+            --aqua-500: #2B4D5D;
+            --copper-500: #A76135;
+            --copper-300: #CB9F82;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            height: 100%;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: radial-gradient(ellipse at center, var(--ink-900) 0%, var(--ink-700) 100%);
+            color: var(--fog-50);
+            line-height: 1.4;
+            overflow-x: hidden;
+            font-weight: 400; /* Made default font slightly lighter */
+        }
+
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        /* Header */
+        .header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(28, 30, 31, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(91, 91, 90, 0.2);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--fog-50);
+            text-decoration: none;
+        }
+
+        /* NEW: Wrapper for all right-side header elements */
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .nav {
+            display: flex;
+            gap: 2rem;
+            /* align-items: center; -- This is now handled by .header-right */
+        }
+
+        .nav a {
+            color: var(--steel-400);
+            text-decoration: none;
+            font-weight: 400; /* UPDATED: Was 500 */
+            transition: color 0.2s ease;
+        }
+
+        .nav a:hover {
+            color: var(--fog-50);
+        }
+
+        /* NEW: Style for the "Log In" link */
+        .login-link {
+            color: var(--fog-50); /* UPDATED: Was --steel-400 */
+            text-decoration: none;
+            font-weight: 500; /* UPDATED: Was 500, kept 500 for prominence */
+            transition: color 0.2s ease;
+        }
+
+        .login-link:hover {
+            color: var(--copper-300); /* UPDATED: Was --fog-50 */
+        }
+
+        .cta-button {
+            background: linear-gradient(135deg, var(--aqua-600), var(--aqua-500));
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 1rem;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 12px rgba(50, 109, 136, 0.3);
+        }
+
+        .cta-button:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(50, 109, 136, 0.4);
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 6rem 0 4rem;
+            /*
+             FIX: Removed grid properties from .hero
+             The .hero element only has one child (.container),
+             so the grid properties were not affecting the two columns.
+            */
+            min-height: 85%;
+        }
+
+        /*
+         NEW RULE: Apply grid properties to the .container
+         inside .hero. .container is the direct parent of
+         .hero-content and .quick-view, so this will
+         correctly create the two-column layout.
+        */
+        .hero .container {
+            display: grid;
+            grid-template-columns: 1.1fr 0.9fr; /* This applies the 1.1:0.9 ratio you wanted */
+            gap: 4rem;
+            align-items: start;
+        }
+
+
+        .hero-content h1 {
+            font-size: 3.75rem;
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 1.75rem;
+            background: linear-gradient(135deg, var(--fog-50) 0%, var(--steel-400) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -0.025em;
+        }
+
+        .hero-content p {
+            font-size: 1.25rem;
+            color: var(--steel-400);
+            margin-bottom: 2.5rem;
+            line-height: 1.6;
+            max-width: 95%;
+        }
+
+        .hero-ctas {
+            display: flex;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--aqua-600), var(--aqua-500));
+            color: white;
+            padding: 1.25rem 2.5rem;
+            border-radius: 1.25rem;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.125rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 6px 20px rgba(50, 109, 136, 0.25);
+            border: none;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .btn-primary:hover::before {
+            left: 100%;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(50, 109, 136, 0.4);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--fog-50);
+            padding: 1.25rem 2.5rem;
+            border-radius: 1.25rem;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.125rem;
+            border: 2px solid rgba(91, 91, 90, 0.4);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(91, 91, 90, 0.15);
+            border-color: var(--steel-400);
+            transform: translateY(-2px);
+        }
+
+        /* Hero Trust Badges */
+        .hero-trust-badges {
+            display: flex;
+            gap: 1.5rem;
+            margin-top: 2.5rem;
+            flex-wrap: wrap;
+        }
+
+        .hero-badge {
+            background: rgba(50, 109, 136, 0.15);
+            color: var(--fog-50);
+            padding: 0.75rem 1.25rem;
+            border-radius: 1.5rem;
+            font-size: 0.9rem;
+            font-weight: 600;
+            border: 1px solid rgba(50, 109, 136, 0.25);
+            backdrop-filter: blur(10px);
+            display: inline-flex; /* Changed to inline-flex for better alignment */
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* NEW RULE for the icons */
+        .hero-badge-icon {
+            width: 1.95em; /* UPDATED: Was 1.3em (1.3 * 1.5) */
+            height: 1.95em; /* UPDATED: Was 1.3em (1.3 * 1.5) */
+            color: var(--copper-300); /* Use the accent color for the icon */
+            flex-shrink: 0;
+            filter: drop-shadow(0 0 6px var(--copper-300)); /* ADDED: Neon glow */
+        }
+
+        /* Quick View Tabs */
+        .quick-view {
+            background: linear-gradient(135deg, rgba(43, 59, 67, 0.4), rgba(28, 30, 31, 0.6));
+            border-radius: 1.75rem;
+            padding: 2rem;
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(91, 91, 90, 0.3);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            position: relative;
+            /* margin-top: 1rem; -- REMOVED to pull box up */
+            transition: all 0.3s ease; /* ADDED for punchy hover effect */
+        }
+
+        /* NEW: Added punchy hover effect */
+        .quick-view:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
+        }
+
+        .quick-view::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(203, 159, 130, 0.05), rgba(50, 109, 136, 0.05));
+            border-radius: 2rem;
+            pointer-events: none;
+        }
+
+        .tab-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .tab-button {
+            background: rgba(28, 30, 31, 0.4);
+            color: var(--steel-400);
+            padding: 0.875rem 1rem;
+            border: 1px solid rgba(91, 91, 90, 0.25);
+            border-radius: 0.875rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+            text-align: center;
+            backdrop-filter: blur(10px);
+        }
+
+        .tab-button:hover {
+            background: rgba(50, 109, 136, 0.1);
+            border-color: rgba(50, 109, 136, 0.3);
+            color: var(--fog-50);
+        }
+
+        .tab-button.active {
+            background: linear-gradient(135deg, rgba(50, 109, 136, 0.25), rgba(50, 109, 136, 0.15));
+            color: var(--fog-50);
+            border-color: var(--aqua-600);
+            box-shadow: 0 6px 20px rgba(50, 109, 136, 0.35); /* UPDATED: Made shadow stronger */
+        }
+
+        .tab-content {
+            display: none;
+            position: relative;
+            z-index: 1;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .tab-content ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .tab-content li {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.875rem 0;
+            color: var(--steel-400);
+            font-size: 1.05rem;
+            font-weight: 400; /* UPDATED: Was 500 */
+            border-bottom: 1px solid rgba(91, 91, 90, 0.1);
+        }
+
+        .tab-content li:last-child {
+            border-bottom: none;
+        }
+
+        .tab-content li::before {
+            content: "●";
+            color: var(--copper-500);
+            font-weight: bold;
+            font-size: 0.75rem;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--copper-500);
+            box-shadow: 0 0 8px rgba(167, 97, 53, 0.4);
+            flex-shrink: 0;
+        }
+
+        /* Trust Band */
+        .trust-band {
+            padding: 2rem 0;
+            border-top: 1px solid rgba(91, 91, 90, 0.2);
+            border-bottom: 1px solid rgba(91, 91, 90, 0.2);
+        }
+
+        .trust-content {
+            text-align: center;
+        }
+
+        .disclaimer {
+            font-size: 0.85rem;
+            color: var(--steel-600);
+            font-style: italic;
+        }
+
+        /* Sections */
+        .section {
+            padding: 5rem 0;
+        }
+
+        .section h2 {
+            font-size: 2.75rem;
+            font-weight: 800;
+            text-align: center;
+            margin-bottom: 3.5rem;
+            color: var(--fog-50);
+            letter-spacing: -0.02em;
+            position: relative;
+        }
+
+        .section h2::after {
+            content: '';
+            position: absolute;
+            bottom: -1rem;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 3px;
+            background: linear-gradient(90deg, var(--copper-500), var(--aqua-600));
+            border-radius: 2px;
+        }
+
+        .proof-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+        }
+
+        .proof-card {
+            background: linear-gradient(135deg, rgba(43, 59, 67, 0.4), rgba(28, 30, 31, 0.6));
+            border-radius: 1.75rem;
+            padding: 2rem;
+            border: 1px solid rgba(91, 91, 90, 0.25);
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .proof-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(203, 159, 130, 0.03), rgba(50, 109, 136, 0.03));
+            border-radius: 2rem;
+            pointer-events: none;
+        }
+
+        .proof-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+            border-color: rgba(50, 109, 136, 0.4);
+        }
+
+        .proof-card h3 {
+            font-size: 1.625rem;
+            font-weight: 700;
+            margin-bottom: 1.25rem;
+            color: var(--fog-50);
+            position: relative;
+            z-index: 1;
+        }
+
+        .proof-card p {
+            color: var(--steel-400);
+            line-height: 1.65;
+            font-size: 1.05rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--copper-500);
+            box-shadow: 0 0 15px rgba(167, 97, 53, 0.6);
+            display: inline-block;
+            margin-right: 0.75rem;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        /* Product Pillars */
+        .pillars {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2.5rem;
+        }
+
+        .pillar {
+            background: linear-gradient(135deg, rgba(43, 59, 67, 0.4), rgba(28, 30, 31, 0.6));
+            border-radius: 2rem;
+            padding: 2.5rem;
+            border: 1px solid rgba(91, 91, 90, 0.25);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .pillar::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(203, 159, 130, 0.02), rgba(50, 109, 136, 0.02));
+            border-radius: 2rem;
+            pointer-events: none;
+        }
+
+        .pillar:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 15px 45px rgba(0, 0, 0, 0.3);
+            border-color: rgba(50, 109, 136, 0.3);
+        }
+
+        .pillar h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            color: var(--fog-50);
+            position: relative;
+            z-index: 1;
+        }
+
+        .pillar ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            position: relative;
+            z-index: 1;
+        }
+
+        .pillar li {
+            padding: 0.75rem 0;
+            color: var(--steel-400);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1rem;
+            font-weight: 400; /* UPDATED: Was 500 */
+            border-bottom: 1px solid rgba(91, 91, 90, 0.08);
+        }
+
+        .pillar li:last-child {
+            border-bottom: none;
+        }
+
+        .pillar li::before {
+            content: "→";
+            color: var(--aqua-600);
+            font-weight: bold;
+            font-size: 1.1rem;
+            flex-shrink: 0;
+        }
+
+        .chip {
+            background: rgba(50, 109, 136, 0.25);
+            color: var(--aqua-600);
+            padding: 0.375rem 0.875rem;
+            border-radius: 1.25rem;
+            font-size: 0.8rem;
+            font-weight: 600;
+            /* margin-left: 0.75rem; */ /* <-- This was removed */
+            margin-left: auto; /* <-- This was added */
+            border: 1px solid rgba(50, 109, 136, 0.3);
+            backdrop-filter: blur(10px);
+            flex-shrink: 0; /* <-- This was added to prevent shrinking */
+        }
+
+        .warning-chip {
+            background: rgba(167, 97, 53, 0.25);
+            color: var(--copper-500);
+            border-color: rgba(167, 97, 53, 0.3);
+        }
+
+        /* Pricing */
+        .pricing-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2.5rem;
+            margin-top: 3rem;
+        }
+
+        .pricing-card {
+            background: linear-gradient(135deg, rgba(43, 59, 67, 0.4), rgba(28, 30, 31, 0.6));
+            border-radius: 2rem;
+            padding: 2.5rem;
+            border: 1px solid rgba(91, 91, 90, 0.25);
+            text-align: center;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .pricing-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(203, 159, 130, 0.02), rgba(50, 109, 136, 0.02));
+            border-radius: 2rem;
+            pointer-events: none;
+        }
+
+        .pricing-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+        }
+
+        .pricing-card.featured {
+            border-color: var(--aqua-600);
+            box-shadow: 0 0 30px rgba(50, 109, 136, 0.4);
+            transform: scale(1.02);
+        }
+
+        .pricing-card.featured:hover {
+            transform: scale(1.02) translateY(-6px);
+        }
+
+        .pricing-card h3 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+            color: var(--fog-50);
+            position: relative;
+            z-index: 1;
+        }
+
+        .price {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--aqua-600);
+            margin-bottom: 0.5rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .price-note {
+            font-size: 1rem;
+            color: var(--steel-400);
+            margin-bottom: 2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .pricing-card p {
+            color: var(--steel-400);
+            line-height: 1.6;
+            margin-bottom: 2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Footer */
+        .footer {
+            padding: 4rem 0 2rem;
+            border-top: 1px solid rgba(91, 91, 90, 0.2);
+            text-align: center;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer-section h4 {
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--fog-50);
+        }
+
+        .footer-section a {
+            color: var(--steel-400);
+            text-decoration: none;
+            display: block;
+            margin-bottom: 0.5rem;
+            transition: color 0.2s ease;
+        }
+
+        .footer-section a:hover {
+            color: var(--fog-50);
+        }
+
+        .footer-bottom {
+            padding-top: 2rem;
+            border-top: 1px solid rgba(91, 91, 90, 0.2);
+            color: var(--steel-600);
+            font-size: 0.9rem;
+        }
+
+        /* FAQ Styles */
+        .faq-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .faq-item {
+            border-bottom: 1px solid rgba(91, 91, 90, 0.24);
+            margin-bottom: 1rem;
+        }
+
+        .faq-question {
+            width: 100%;
+            background: none;
+            border: none;
+            color: var(--fog-50);
+            font-size: 1.125rem;
+            font-weight: 600;
+            padding: 1.5rem 0;
+            text-align: left;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: color 0.2s ease;
+        }
+
+        .faq-question:hover {
+            color: var(--aqua-600);
+        }
+
+        .faq-icon {
+            font-size: 1.5rem;
+            font-weight: 300;
+            color: var(--copper-500);
+            transition: transform 0.2s ease;
+        }
+
+        .faq-item.active .faq-icon {
+            transform: rotate(45deg);
+        }
+
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease, padding 0.3s ease;
+        }
+
+        .faq-item.active .faq-answer {
+            max-height: 200px;
+            padding-bottom: 1.5rem;
+        }
+
+        .faq-answer p {
+            color: var(--steel-400);
+            line-height: 1.6;
+        }
+
+        /* Final CTA Styles */
+        .final-cta {
+            background: linear-gradient(135deg, rgba(50, 109, 136, 0.1), rgba(167, 97, 53, 0.05));
+            border-top: 1px solid rgba(91, 91, 90, 0.32);
+            border-bottom: 1px solid rgba(91, 91, 90, 0.32);
+            padding: 5rem 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .final-cta::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 30% 50%, rgba(203, 159, 130, 0.1) 0%, transparent 50%),
+                        radial-gradient(circle at 70% 50%, rgba(50, 109, 136, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        .final-cta-content {
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .final-cta-content h2 {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 2rem;
+            background: linear-gradient(135deg, var(--fog-50), var(--aqua-600));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .final-cta-buttons {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .final-cta-buttons .btn-primary {
+            box-shadow: 0 8px 25px rgba(50, 109, 136, 0.4);
+            position: relative;
+        }
+
+        .final-cta-buttons .btn-primary::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(135deg, var(--copper-300), var(--aqua-600));
+            border-radius: 1rem;
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .final-cta-buttons .btn-primary:hover::before {
+            opacity: 0.3;
+        }
+
+        /* Legal Disclosures */
+        .legal-disclosures {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(91, 91, 90, 0.2);
+        }
+
+        .legal-disclosures p {
+            font-size: 0.8rem;
+            color: var(--steel-600);
+            margin-bottom: 0.5rem;
+            line-height: 1.4;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .hero {
+                /*
+                 FIX: Removed grid properties.
+                 They are now on .hero .container.
+                */
+                text-align: center;
+                padding: 4rem 0; /* Adjusted padding for tablet */
+            }
+
+            /*
+             NEW RULE: This makes the hero layout
+             stack to a single column on tablets.
+            */
+            .hero .container {
+                grid-template-columns: 1fr;
+                gap: 3rem;
+            }
+
+            .section {
+                padding: 5rem 0;
+            }
+
+            .section h2 {
+                font-size: 2.5rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .hero {
+                padding: 3rem 0 2rem;
+            }
+
+            .hero-content h1 {
+                font-size: 2.5rem;
+                line-height: 1.15;
+            }
+
+            .hero-content p {
+                font-size: 1.125rem;
+                max-width: 100%;
+            }
+
+            .tab-buttons {
+                grid-template-columns: 1fr;
+                gap: 0.5rem;
+            }
+
+            .nav {
+                display: none;
+            }
+
+            .container {
+                padding: 0 1rem;
+            }
+
+            .section {
+                padding: 3rem 0;
+            }
+
+            .section h2 {
+                font-size: 2rem;
+                margin-bottom: 2.5rem;.
+            }
+
+            .proof-cards, .pillars, .pricing-cards {
+                grid-template-columns: 1fr;
+                gap: 1.25rem;
+            }
+
+            .btn-primary, .btn-secondary {
+                padding: 1rem 2rem;
+                font-size: 1rem;
+            }
+
+            .hero-ctas {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 1rem;
+            }
+
+            .hero-trust-badges {
+                justify-content: center;
+                gap: 1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero-content h1 {
+                font-size: 2.25rem;
+            }
+
+            .hero-content p {
+                font-size: 1.125rem;
+            }
+
+            .section h2 {
+                font-size: 2rem;
+            }
+
+            .quick-view {
+                padding: 1.5rem;
+            }
+
+            .proof-card, .pillar, .pricing-card {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+  <style>@view-transition { navigation: auto; }</style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+  <script src="https://cdn.tailwindcss.com" type="text/javascript"></script>
+ </head>
+ <body>
+  <header class="header">
+   <div class="container">
+    <div class="header-content">
+     <a href="#" class="logo" id="company-name">Dollarbaz</a>
+     <!-- UPDATED: Wrapped right-side elements for proper spacing -->
+     <div class="header-right">
+      <nav class="nav"><a href="#features">Features</a> <a href="#pricing">Pricing</a> <a href="#security">Security</a> <a href="#contact">Contact</a>
+      </nav>
+      <!-- NEW: Added Log In link -->
+      <a href="#" class="login-link">Log In</a>
+      <a href="#" class="cta-button" id="header-cta">Get Early Access</a>
+     </div>
+    </div>
+   </div>
+  </header>
+  <main><!-- Hero Section -->
+   <section class="hero">
+    <div class="container">
+     <div class="hero-content">
+      <h1 id="main-headline">Your 10-second money cockpit for EU/UK teams.</h1>
+      <p id="subheadline">Open local IBAN/GBP accounts, issue virtual cards, send instant payments with VoP/CoP checks, and automate cashflow—plus planning &amp; trading in one dashboard.</p>
+      <div class="hero-ctas"><button class="btn-primary" id="primary-cta">Get Early Access</button> <a href="#" class="btn-secondary" id="secondary-cta">See 2-min Demo</a>
+      </div>
+      <div class="hero-trust-badges">
+        <!-- Icon 1: Instant (Lightning Bolt) -->
+        <span class="hero-badge">
+            <svg class="hero-badge-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                <path d="M11.983 1.907a.75.75 0 00-1.292-.657l-8.5 9.5A.75.75 0 002.75 12h6.57l-1.072 5.36a.75.75 0 001.292.657l8.5-9.5A.75.75 0 0017.25 8h-6.57l1.072-5.36a.75.75 0 00-.77-.734z" />
+            </svg>
+            Instant
+        </span>
+        <!-- Icon 2: VoP/CoP (Checkmark) -->
+        <span class="hero-badge">
+            <svg class="hero-badge-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                <path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clip-rule="evenodd" />
+            </svg>
+            VoP/CoP
+        </span>
+        <!-- Icon 3: GDPR (Lock) -->
+        <span class="hero-badge">
+            <svg class="hero-badge-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                <path fill-rule="evenodd" d="M10 1a4.5 4.5 0 00-4.5 4.5V9H5a2 2 0 00-2 2v6a2 2 0 002 2h10a2 2 0 002-2v-6a2 2 0 00-2-2h-.5V5.5A4.5 4.5 0 0010 1zm3 8V5.5a3 3 0 10-6 0V9h6z" clip-rule="evenodd" />
+            </svg>
+            GDPR
+        </span>
+        <!-- Icon 4: DORA-ready (Shield) -->
+        <span class="hero-badge">
+            <svg class="hero-badge-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                <path fill-rule="evenodd" d="M10 1.944A11.954 11.954 0 012.166 5.09.05.05 0 012 5.044V10c0 4.446 3.582 8.067 8 8.067s8-3.621 8-8.067V5.044a.05.05 0 01-.166-.046A11.954 11.954 0 0110 1.944zM8.25 10a.75.75 0 01.75-.75h2a.75.75 0 010 1.5h-2a.75.75 0 01-.75-.75zm0 2.25a.75.75 0 01.75-.75h.01a.75.75 0 010 1.5h-.01a.75.75 0 01-.75-.75zm1.5.75a.75.75 0 00-.75.75v.01a.75.75 0 001.5 0v-.01a.75.75 0 00-.75-.75zm.75 2.25a.75.75 0 01.75-.75h.01a.75.75 0 010 1.5h-.01a.75.75 0 01-.75-.75z" clip-rule="evenodd" />
+            </svg>
+            DORA-ready
+        </span>
+      </div>
+     </div>
+     <div class="quick-view">
+      <div class="tab-buttons"><button class="tab-button active" data-tab="banking">Core Banking</button> <button class="tab-button" data-tab="b2b">B2B Services</button> <button class="tab-button" data-tab="planning">Planning</button> <button class="tab-button" data-tab="trading">Trading</button>
+      </div>
+      <div class="tab-content active" id="banking">
+       <ul>
+        <li>Local EU IBANs + GBP</li>
+        <li>Instant euro + VoP / Faster Payments + CoP</li>
+        <li>Virtual cards with merchant locks</li>
+       </ul>
+      </div>
+      <div class="tab-content" id="b2b">
+       <ul>
+        <li>Team wallets &amp; approvals</li>
+        <li>Mass payouts</li>
+        <li>Pay-by-link (SEPA Inst / PIS)</li>
+       </ul>
+      </div>
+      <div class="tab-content" id="planning">
+       <ul>
+        <li>Brief: balances, runway, VAT</li>
+        <li>Autopilot rules</li>
+        <li>Anomaly alerts</li>
+       </ul>
+      </div>
+      <div class="tab-content" id="trading">
+       <ul>
+        <li>FX, stocks, crypto (via partners)</li>
+        <li>Rules-based allocators</li>
+        <li>Read-only until enabled</li>
+       </ul>
+      </div>
+     </div>
+    </div>
+   </section><!-- Trust Band -->
+   <section class="trust-band">
+    <div class="container">
+     <div class="trust-content">
+      <div class="disclaimer">
+       Trading via regulated partners. Capital at risk. Eligibility applies.
+      </div>
+     </div>
+    </div>
+   </section><!-- Why Dollarbaz -->
+   <section class="section">
+    <div class="container">
+     <h2>Why Dollarbaz</h2>
+     <div class="proof-cards">
+      <div class="proof-card">
+       <h3><span class="status-dot"></span>Faster to cash</h3>
+       <p>Ten-second transfers on euro/GBP with name-checks to prevent mis-directed payments.</p>
+      </div>
+      <div class="proof-card">
+       <h3><span class="status-dot"></span>Compliance that feels invisible</h3>
+       <p>VoP/CoP flows, SCA, and audit-ready logs baked into the UI.</p>
+      </div>
+      <div class="proof-card">
+       <h3><span class="status-dot"></span>Books that close themselves</h3>
+       <p>vIBAN-per-invoice + Autopilot rules = 95%+ auto-match.</p>
+      </div>
+     </div>
+    </div>
+   </section><!-- Product Pillars -->
+   <section class="section" id="features">
+    <div class="container">
+     <h2>Product Pillars</h2>
+     <div class="pillars">
+      <div class="pillar">
+       <h3>Money &amp; Safety</h3>
+       <ul>
+        <li>Local EU IBANs + GBP <span class="chip">Live</span></li>
+        <li>SCT Inst + VoP <span class="chip">Live</span></li>
+        <li>FPS + CoP <span class="chip">Live</span></li>
+        <li>Virtual cards (MCC, per-vendor, geo/limits) <span class="chip">Beta</span></li>
+       </ul>
+      </div>
+      <div class="pillar">
+       <h3>The Brief</h3>
+       <ul>
+        <li>8am snapshot—balances, runway, VAT pot</li>
+        <li>Invoices due, FX watch</li>
+        <li>Anomalies <span class="chip warning-chip">Alert</span></li>
+       </ul>
+      </div>
+      <div class="pillar">
+       <h3>Autopilot</h3>
+       <ul>
+        <li>VAT Safety Net rules</li>
+        <li>FX Threshold Convert</li>
+        <li>Late-Invoice Nudger</li>
+        <li>End-of-Month Sweep</li>
+       </ul>
+      </div>
+      <div class="pillar">
+       <h3>Trading &amp; Treasury</h3>
+       <ul>
+        <li>FX, indices, stocks, crypto via partners</li>
+        <li>Rules &gt; impulse <span class="chip warning-chip">Capital at risk</span></li>
+       </ul>
+      </div>
+      <div class="pillar">
+       <h3>B2B Ops</h3>
+       <ul>
+        <li>Team wallets, approvals</li>
+        <li>Mass payouts</li>
+        <li>Webhooks <span class="chip">API</span></li>
+       </ul>
+      </div>
+     </div>
+    </div>
+   </section><!-- Pricing -->
+   <section class="section" id="pricing">
+    <div class="container">
+     <h2>Pricing</h2>
+     <div class="pricing-cards">
+      <div class="pricing-card">
+       <h3>Free</h3>
+       <div class="price">
+        €0
+       </div>
+       <div class="price-note">
+        Account + Brief Lite
+       </div><button class="btn-secondary">Get Started</button>
+      </div>
+      <div class="pricing-card featured">
+       <h3>Pro</h3>
+       <div class="price">
+        €12
+       </div>
+       <div class="price-note">
+        per seat/month
+       </div>
+       <p>Autopilot rules, invoicing, reconciliation</p><button class="btn-primary">Choose Pro</button>
+      </div>
+      <div class="pricing-card">
+       <h3>Premium</h3>
+       <div class="price">
+        €29
+       </div>
+       <div class="price-note">
+        per seat/month
+       </div>
+       <p>Advanced rules, API, multi-entity</p><button class="btn-secondary">Choose Premium</button>
+      </div>
+     </div>
+     <p style="text-align: center; margin-top: 2rem; color: var(--steel-600); font-size: 0.9rem;">Instant payments availability and limits depend on your account and recipient bank.</p>
+    </div>
+   </section><!-- Security -->
+   <section class="section" id="security">
+    <div class="container">
+     <h2>Security &amp; Compliance</h2>
+     <div class="proof-cards">
+      <div class="proof-card">
+       <h3>🏛️ GDPR &amp; EU Data Residency</h3>
+       <p>Your data stays in the EU with full GDPR compliance and privacy controls.</p>
+      </div>
+      <div class="proof-card">
+       <h3>🔐 PCI SAQ-A Compliant</h3>
+       <p>Hosted payment fields ensure your card data never touches our servers.</p>
+      </div>
+      <div class="proof-card">
+       <h3>📋 DORA-Aligned</h3>
+       <p>Vendor management and operational resilience ready for EU regulations.</p>
+      </div>
+     </div>
+    </div>
+   </section><!-- FAQ -->
+   <section class="section" id="faq">
+    <div class="container">
+     <h2>Frequently Asked Questions</h2>
+     <div class="faq-container">
+      <div class="faq-item"><button class="faq-question"> What's VoP vs CoP? <span class="faq-icon">+</span> </button>
+       <div class="faq-answer">
+        <p>VoP (Verification of Payee) checks the beneficiary's name before you send euro payments. CoP (Confirmation of Payee) does the same for UK Faster Payments. Both prevent misdirected transfers by matching account names.</p>
+       </div>
+      </div>
+      <div class="faq-item"><button class="faq-question"> Are instant payments always available? <span class="faq-icon">+</span> </button>
+       <div class="faq-answer">
+        <p>Instant payments depend on your account type and the recipient's bank. SEPA Instant works 24/7 across most EU banks, while UK Faster Payments operate around the clock for participating banks. We'll show you real-time availability before you send.</p>
+       </div>
+      </div>
+      <div class="faq-item"><button class="faq-question"> How do vIBANs work per invoice? <span class="faq-icon">+</span> </button>
+       <div class="faq-answer">
+        <p>Each invoice gets a unique virtual IBAN that routes to your main account. When customers pay, we automatically match the payment to the specific invoice, eliminating manual reconciliation. Perfect for subscription billing and B2B invoicing.</p>
+       </div>
+      </div>
+      <div class="faq-item"><button class="faq-question"> Which countries are supported? <span class="faq-icon">+</span> </button>
+       <div class="faq-answer">
+        <p>We support EU27 + UK companies with local IBAN and GBP account opening. Send payments to 200+ countries via SEPA, SWIFT, and local rails. Trading services availability varies by jurisdiction and regulatory approval.</p>
+       </div>
+      </div>
+      <div class="faq-item"><button class="faq-question"> How is trading provided? <span class="faq-icon">+</span> </button>
+       <div class="faq-answer">
+        <p>Trading services are provided by regulated third-party partners. You can access FX, stocks, ETFs, and crypto through our unified interface, but execution happens with licensed brokers. Capital at risk - not investment advice.</p>
+       </div>
+      </div>
+      <div class="faq-item"><button class="faq-question"> Can I bring my accountant? <span class="faq-icon">+</span> </button>
+       <div class="faq-answer">
+        <p>Absolutely. We integrate with Xero, QuickBooks, and provide read-only access for your accountant. Export audit trails, transaction logs, and reconciliation reports in standard formats. Your accountant will love the clean data.</p>
+       </div>
+      </div>
+     </div>
+    </div>
+   </section><!-- Final CTA -->
+   <section class="final-cta">
+    <div class="container">
+     <div class="final-cta-content">
+      <h2>Ready to close the books automatically?</h2>
+      <div class="final-cta-buttons"><button class="btn-primary" data-event="cta_early_access">Get Early Access</button> <button class="btn-secondary" data-event="cta_demo_click">Book a 15-min Fit Call</button>
+      </div>
+     </div>
+    </div>
+   </section>
+  </main>
+  <footer class="footer">
+   <div class="container">
+    <div class="footer-content">
+     <div class="footer-section">
+      <h4>Product</h4><a href="#">Core Banking</a> <a href="#">B2B Services</a> <a href="#">Planning</a> <a href="#">Trading</a>
+     </div>
+     <div class="footer-section">
+      <h4>Company</h4><a href="#">About</a> <a href="#">Careers</a> <a href="#">Press</a> <a href="#">Contact</a>
+     </div>
+     <div class="footer-section">
+      <h4>Resources</h4><a href="#">Documentation</a> <a href="#">API</a> <a href="#">Support</a> <a href="#">Status</a>
+     </div>
+     <div class="footer-section">
+      <h4>Legal</h4><a href="#">Privacy</a> <a href="#">Terms</a> <a href="#">Security</a> <a href="#">Compliance</a>
+     </div>
+    </div>
+    <div class="footer-bottom">
+     <p>© 2024 Dollarbaz. All rights reserved.</p>
+     <div class="legal-disclosures">
+      <p>Payment accounts and cards are provided by regulated partners. Instant payments availability and limits depend on your account and recipient bank.</p>
+      <p>Trading services are offered by third-party regulated entities. Capital at risk. Not investment advice.</p>
+     </div>
+    </div>
+   </div>
+  </footer>
+  <script>
+        // Default configuration
+        const defaultConfig = {
+            main_headline: "Your 10-second money cockpit for EU/UK teams.",
+            subheadline: "Open local IBAN/GBP accounts, issue virtual cards, send instant payments with VoP/CoP checks, and automate cashflow—plus planning & trading in one dashboard.",
+            primary_cta: "Get Early Access",
+            secondary_cta: "See 2-min Demo",
+            company_name: "Dollarbaz",
+            background_color: "#1C1E1F",
+            surface_color: "#2B3B43",
+            text_color: "#E2E1DC",
+            primary_action_color: "#326D88",
+            secondary_action_color: "#A76135",
+            font_family: "Inter",
+            font_size: 16
+        };
+
+        // Tab functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const tabButtons = document.querySelectorAll('.tab-button');
+            const tabContents = document.querySelectorAll('.tab-content');
+
+            tabButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const targetTab = button.getAttribute('data-tab');
+
+                    // Remove active class from all buttons and contents
+                    tabButtons.forEach(btn => btn.classList.remove('active'));
+                    tabContents.forEach(content => content.classList.remove('active'));
+
+                    // Add active class to clicked button and corresponding content
+                    button.classList.add('active');
+                    document.getElementById(targetTab).classList.add('active');
+                });
+            });
+
+            // FAQ functionality
+            const faqItems = document.querySelectorAll('.faq-item');
+            faqItems.forEach(item => {
+                const question = item.querySelector('.faq-question');
+                question.addEventListener('click', () => {
+                    const isActive = item.classList.contains('active');
+
+                    // Close all FAQ items
+                    faqItems.forEach(faqItem => {
+                        faqItem.classList.remove('active');
+                    });
+
+                    // Open clicked item if it wasn't active
+                    if (!isActive) {
+                        item.classList.add('active');
+                    }
+                });
+            });
+
+            // Analytics tracking for CTA buttons
+            document.querySelectorAll('[data-event]').forEach(button => {
+                button.addEventListener('click', function(e) {
+                    const event = this.getAttribute('data-event');
+                    // In a real implementation, this would send to your analytics service
+                    console.log('Analytics event:', event);
+
+                    // Prevent default for demo purposes
+                    e.preventDefault();
+
+                    // Show feedback to user
+                    const originalText = this.textContent;
+                    this.textContent = event === 'cta_early_access' ? 'Thanks for your interest!' : 'We\'ll be in touch!';
+                    this.style.opacity = '0.7';
+
+                    setTimeout(() => {
+                        this.textContent = originalText;
+                        this.style.opacity = '1';
+                    }, 2000);
+                });
+            });
+
+            // Smooth scrolling for navigation links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const target = document.querySelector(this.getAttribute('href'));
+                    if (target) {
+                        target.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
+                });
+            });
+        });
+
+        // Element SDK implementation
+        async function onConfigChange(config) {
+            const customFont = config.font_family || defaultConfig.font_family;
+            const baseSize = config.font_size || defaultConfig.font_size;
+            const baseFontStack = '-apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
+
+            // Update text content
+            document.getElementById('main-headline').textContent = config.main_headline || defaultConfig.main_headline;
+            document.getElementById('subheadline').textContent = config.subheadline || defaultConfig.subheadline;
+            document.getElementById('primary-cta').textContent = config.primary_cta || defaultConfig.primary_cta;
+            document.getElementById('secondary-cta').textContent = config.secondary_cta || defaultConfig.secondary_cta;
+            document.getElementById('company-name').textContent = config.company_name || defaultConfig.company_name;
+            document.getElementById('header-cta').textContent = config.primary_cta || defaultConfig.primary_cta;
+
+            // Update colors
+            const backgroundColor = config.background_color || defaultConfig.background_color;
+            const surfaceColor = config.surface_color || defaultConfig.surface_color;
+            const textColor = config.text_color || defaultConfig.text_color;
+            const primaryActionColor = config.primary_action_color || defaultConfig.primary_action_color;
+            const secondaryActionColor = config.secondary_action_color || defaultConfig.secondary_action_color;
+
+            document.body.style.background = `radial-gradient(ellipse at center, ${backgroundColor} 0%, ${surfaceColor} 100%)`;
+            document.body.style.color = textColor;
+
+            // Update primary action buttons
+            const primaryButtons = document.querySelectorAll('.btn-primary, .cta-button');
+            primaryButtons.forEach(btn => {
+                btn.style.background = `linear-gradient(135deg, ${primaryActionColor}, ${surfaceColor})`;
+                btn.style.boxShadow = `0 4px 12px ${primaryActionColor}40`;
+            });
+
+            // Update secondary action elements
+            const secondaryElements = document.querySelectorAll('.status-dot');
+            secondaryElements.forEach(el => {
+                el.style.background = secondaryActionColor;
+                el.style.boxShadow = `0 0 10px ${secondaryActionColor}80`;
+            });
+
+            // Update font family
+            document.body.style.fontFamily = `${customFont}, ${baseFontStack}`;
+
+            // Update font sizes proportionally
+            const h1Elements = document.querySelectorAll('h1');
+            h1Elements.forEach(el => el.style.fontSize = `${baseSize * 3.5}px`);
+
+            const h2Elements = document.querySelectorAll('h2');
+            h2Elements.forEach(el => el.style.fontSize = `${baseSize * 2.5}px`);
+
+            const h3Elements = document.querySelectorAll('h3');
+            h3Elements.forEach(el => el.style.fontSize = `${baseSize * 1.5}px`);
+
+            const bodyElements = document.querySelectorAll('p, li, a, button');
+            bodyElements.forEach(el => el.style.fontSize = `${baseSize}px`);
+        }
+
+        function mapToCapabilities(config) {
+            return {
+                recolorables: [
+                    {
+                        get: () => config.background_color || defaultConfig.background_color,
+                        set: (value) => {
+                            if (window.elementSdk) {
+                                window.elementSdk.setConfig({ background_color: value });
+                            }
+                        }
+                    },
+                    {
+                        get: () => config.surface_color || defaultConfig.surface_color,
+                        set: (value) => {
+                            if (window.elementSdk) {
+                                window.elementSdk.setConfig({ surface_color: value });
+                            }
+                        }
+                    },
+                    {
+                        get: () => config.text_color || defaultConfig.text_color,
+                        set: (value) => {
+                            if (window.elementSdk) {
+                                window.elementSdk.setConfig({ text_color: value });
+
+                            }
+                        }
+                    },
+                    {
+                        get: () => config.primary_action_color || defaultConfig.primary_action_color,
+                        set: (value) => {
+                            if (window.elementSdk) {
+                                window.elementSdk.setConfig({ primary_action_coler: value });
+                            }
+                        }
+                    },
+                    {
+                        get: () => config.secondary_action_color || defaultConfig.secondary_action_color,
+                        set: (value) => {
+                            if (window.elementSdk) {
+                                window.elementSdk.setConfig({ secondary_action_color: value });
+                            }
+                        }
+                    }
+                ],
+                borderables: [],
+                fontEditable: {
+                    get: () => config.font_family || defaultConfig.font_family,
+                    set: (value) => {
+                        if (window.elementSdk) {
+                            window.elementSdk.setConfig({ font_family: value });
+                        }
+                    }
+                },
+                fontSizeable: {
+                    get: () => config.font_size || defaultConfig.font_size,
+                    set: (value) => {
+                        if (window.elementSdk) {
+                            window.elementSdk.setConfig({ font_size: value });
+                        }
+                    }
+                }
+            };
+        }
+
+        function mapToEditPanelValues(config) {
+            return new Map([
+                ["main_headline", config.main_headline || defaultConfig.main_headline],
+                ["subheadline", config.subheadline || defaultConfig.subheadline],
+                ["primary_cta", config.primary_cta || defaultConfig.primary_cta],
+                ["secondary_cta", config.secondary_cta || defaultConfig.secondary_cta],
+                ["company_name", config.company_name || defaultConfig.company_name]
+            ]);
+        }
+
+        // Initialize Element SDK
+        if (window.elementSdk) {
+            window.elementSdk.init({
+                defaultConfig,
+                onConfigChange,
+                mapToCapabilities,
+                mapToEditPanelValues
+            });
+        }
+    </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9986426641ba0f35',t:'MTc2MjExNDA1OS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
+

@@ -1,0 +1,76 @@
+.
+├── .DS_Store
+├── .env.local
+├── .gitignore
+├── README.md
+├── app
+│   ├── .DS_Store
+│   ├── auth
+│   │   ├── confirm
+│   │   │   └── route.ts
+│   │   ├── error
+│   │   │   └── page.tsx
+│   │   ├── forgot-password
+│   │   │   └── page.tsx
+│   │   ├── login
+│   │   │   ├── actions.ts
+│   │   │   └── page.tsx
+│   │   ├── sign-up
+│   │   │   ├── actions.ts
+│   │   │   └── page.tsx
+│   │   ├── sign-up-success
+│   │   │   └── page.tsx
+│   │   └── update-password
+│   │       └── page.tsx
+│   ├── favicon.ico
+│   ├── globals.css
+│   ├── layout.tsx
+│   ├── opengraph-image.png
+│   ├── page.tsx
+│   ├── protected
+│   │   ├── layout.tsx
+│   │   └── page.tsx
+│   └── twitter-image.png
+├── components
+│   ├── Footer.tsx
+│   ├── Header.tsx
+│   ├── LandingPageClient.tsx
+│   ├── auth-button.tsx
+│   ├── forgot-password-form.tsx
+│   ├── login-form.tsx
+│   ├── logout-button.tsx
+│   ├── sign-up-form.tsx
+│   ├── theme-switcher.tsx
+│   ├── ui
+│   │   ├── badge.tsx
+│   │   ├── button.tsx
+│   │   ├── card.tsx
+│   │   ├── checkbox.tsx
+│   │   ├── dropdown-menu.tsx
+│   │   ├── input.tsx
+│   │   └── label.tsx
+│   └── update-password-form.tsx
+├── components.json
+├── eslint.config.mjs
+├── index.html
+├── lib
+│   ├── supabase
+│   │   ├── client.ts
+│   │   ├── middleware.ts
+│   │   └── server.ts
+│   └── utils.ts
+├── middleware.ts
+├── next-env.d.ts
+├── next.config.ts
+├── package-lock.json
+├── package.json
+├── postcss.config.mjs
+├── project-structure.txt
+├── public
+│   ├── .DS_Store
+│   └── images
+│       └── dollarbaz-logo.png
+├── tailwind.config.ts
+└── tsconfig.json
+
+17 directories, 57 files
