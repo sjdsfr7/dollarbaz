@@ -11,8 +11,8 @@ interface Todo {
 }
 
 export default async function Home() {
-  // No arguments needed for createClient()
-  const supabase = createClient();
+  // Await createClient to get the actual SupabaseClient
+  const supabase = await createClient(); // Await the client here
 
   // Fetching todos from Supabase
   const { data: todos, error } = await supabase.from('todos').select();
