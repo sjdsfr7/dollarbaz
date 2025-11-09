@@ -1,21 +1,32 @@
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import LandingPageClient from '@/components/LandingPageClient'; // We will create this next
-import { createClient } from '@/lib/supabase/server';
+import LandingPageClient from '@/components/LandingPageClient';
+import { createClient } from '@/lib/supabase/server'; // Make sure this function is correctly defined
 import { cookies } from 'next/headers';
 
-export default async function Home() {
-  const cookieStore = cookies();
-  const supabase = createClient(cookieStore);
+// Define the shape of the 'todo' object
+interface Todo {
+  id: string;
+  title: string;
+}
 
-  const { data: todos } = await supabase.from('todos').select();
+export default async function Home() {
+  // No arguments needed for createClient()
+  const supabase = createClient();
+
+  // Fetching todos from Supabase
+  const { data: todos, error } = await supabase.from('todos').select();
+
+  if (error) {
+    console.error('Error fetching todos:', error);
+  }
 
   return (
     <>
       <Header />
       <LandingPageClient />
       <ul>
-        {todos?.map((todo) => (
+        {todos?.map((todo: Todo) => (
           <li key={todo.id}>{todo.title ?? JSON.stringify(todo)}</li>
         ))}
       </ul>
