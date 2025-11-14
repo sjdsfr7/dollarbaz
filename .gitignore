@@ -7,10 +7,13 @@
 
 # yarn
 .yarn/*
+!.yarn/cache
 !.yarn/patches
 !.yarn/plugins
 !.yarn/releases
+!.yarn/sdks
 !.yarn/versions
+.yarnrc.yml
 
 # testing
 /coverage
@@ -55,5 +58,7 @@ next-env.d.ts
 project_structure.txt
 draft/
 
+# Supabase
+# Ignore local Supabase development files
 .supabase/
-.temp/
+supabase/.temp/
