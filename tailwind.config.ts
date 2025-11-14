@@ -1,27 +1,35 @@
-import type { Config } from 'tailwindcss';
+import { Config } from 'tailwindcss';
+import { fontFamily } from 'tailwindcss/defaultTheme';
+import animatePlugin from 'tailwindcss-animate';
 
-const config: Config = {
+const config = {
+  darkMode: ['class'],
   content: [
-    './pages/**/*.{js,ts,jsx,tsx,mdx}',
-    './components/**/*.{js,ts,jsx,tsx,mdx}',
-    './app/**/*.{js,ts,jsx,tsx,mdx}',
+    './pages/**/*.{ts,tsx}',
+    './components/**/*.{ts,tsx}',
+    './app/**/*.{ts,tsx}',
+    './src/**/*.{ts,tsx}',
   ],
-  darkMode: 'class', // Make sure this is present
+  prefix: '',
   theme: {
+    container: {
+      center: true,
+      padding: '2rem',
+      screens: {
+        '2xl': '1400px',
+      },
+    },
     extend: {
+      // --- MERGE: Your Brand Colors from indexdraft3.html ---
       colors: {
-        // Add all our custom color variables
-        'ink-900': 'var(--ink-900)',
-        'ink-700': 'var(--ink-700)',
-        'steel-600': 'var(--steel-600)',
-        'steel-400': 'var(--steel-400)',
-        'fog-50': 'var(--fog-50)',
-        'aqua-600': 'var(--aqua-600)',
-        'aqua-500': 'var(--aqua-500)',
-        'copper-500': 'var(--copper-500)',
-        'copper-300': 'var(--copper-300)',
+        'brand-accent': '#278664', // Dark Teal
+        'brand-accent-dark': '#4e594a', // Dark Olive
+        'brand-accent-medium': '#676e5d', // Medium Olive
+        'brand-accent-light': '#79a471', // Medium Green
+        'brand-accent-lighter': '#a9ba9d', // Light Olive
+        'brand-background': '#fefeea', // Light Cream
 
-        // These are from your original file
+        // --- MERGE: Shadcn/ui Colors (from the template) ---
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',
         ring: 'hsl(var(--ring))',
@@ -56,17 +64,36 @@ const config: Config = {
           foreground: 'hsl(var(--card-foreground))',
         },
       },
+      // --- MERGE: Shadcn/ui border radius ---
       borderRadius: {
         lg: 'var(--radius)',
         md: 'calc(var(--radius) - 2px)',
         sm: 'calc(var(--radius) - 4px)',
       },
-      backgroundImage: {
-        'gradient-radial':
-          'radial-gradient(ellipse at center, var(--tw-gradient-stops))',
+      // --- MERGE: Your Brand Fonts from indexdraft3.html ---
+      fontFamily: {
+        sans: ['var(--font-sans)', ...fontFamily.sans],
+        poppins: ['var(--font-poppins)', ...fontFamily.sans],
+        inter: ['var(--font-inter)', ...fontFamily.sans],
+      },
+      // --- MERGE: Shadcn/ui Keyframes ---
+      keyframes: {
+        'accordion-down': {
+          from: { height: '0' },
+          to: { height: 'var(--radix-accordion-content-height)' },
+        },
+        'accordion-up': {
+          from: { height: 'var(--radix-accordion-content-height)' },
+          to: { height: '0' },
+        },
+      },
+      animation: {
+        'accordion-down': 'accordion-down 0.2s ease-out',
+        'accordion-up': 'accordion-up 0.2s ease-out',
       },
     },
   },
-  plugins: [require('tailwindcss-animate')], // Make sure this is present
-};
+  plugins: [animatePlugin],
+} satisfies Config;
+
 export default config;

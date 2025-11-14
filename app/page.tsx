@@ -1,36 +1,28 @@
 import Header from '@/components/Header';
+import HeroSection from '@/components/HeroSection';
+import LiveTicker from '@/components/LiveTicker';
+import FeaturesSection from '@/components/FeaturesSection';
+import HowItWorksSection from '@/components/HowItWorksSection';
+import TestimonialsSection from '@/components/TestimonialsSection';
+import FaqSection from '@/components/FaqSection';
 import Footer from '@/components/Footer';
-import LandingPageClient from '@/components/LandingPageClient';
-import { createClient } from '@/lib/supabase/server'; // Make sure this function is correctly defined
-import { cookies } from 'next/headers';
 
-// Define the shape of the 'todo' object
-interface Todo {
-  id: string;
-  title: string;
-}
-
-export default async function Home() {
-  // Await createClient to get the actual SupabaseClient
-  const supabase = await createClient(); // Await the client here
-
-  // Fetching todos from Supabase
-  const { data: todos, error } = await supabase.from('todos').select();
-
-  if (error) {
-    console.error('Error fetching todos:', error);
-  }
-
+export default function Page() {
   return (
-    <>
+    <div className="flex flex-col min-h-screen">
       <Header />
-      <LandingPageClient />
-      <ul>
-        {todos?.map((todo: Todo) => (
-          <li key={todo.id}>{todo.title ?? JSON.stringify(todo)}</li>
-        ))}
-      </ul>
+
+      {/* Page Content */}
+      <div className="flex-grow">
+        <HeroSection />
+        <LiveTicker />
+        <FeaturesSection />
+        <HowItWorksSection />
+        <TestimonialsSection />
+        <FaqSection />
+      </div>
+
       <Footer />
-    </>
+    </div>
   );
 }

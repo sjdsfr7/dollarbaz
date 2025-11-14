@@ -1,20 +1,20 @@
-import { NextRequest, NextResponse } from 'next/server'; // Correct import
-import { updateSession } from '@/lib/supabase/middleware'; // Ensure correct import path
+import { type NextRequest } from 'next/server';
+import { updateSession } from '@/lib/supabase/middleware';
 
 export async function middleware(request: NextRequest) {
-  try {
-    // Calling the updateSession to refresh or validate the session
-    const response = await updateSession(request);
-    console.log('Session updated: ', response);
-
-    // Proceed with further logic after session is updated
-    return response;
-  } catch (error) {
-    console.error('Middleware session error: ', error);
-    return NextResponse.redirect(new URL('/login', request.url));
-  }
+  // This function will handle all session logic and redirects
+  return await updateSession(request);
 }
 
 export const config = {
-  matcher: ['/((?!api|_next/static|_next/image|favicon.ico|login).*)'],
+  matcher: [
+    /*
+     * Match all request paths except for the ones starting with:
+     * - _next/static (static files)
+     * - _next/image (image optimization files)
+     * - favicon.ico (favicon file)
+     * Feel free to modify this pattern to include more paths.
+     */
+    '/((?!_next/static|_next/image|favicon.ico).*)',
+  ],
 };

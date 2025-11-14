@@ -1,15 +1,18 @@
 'use server';
 
-import { createClient } from '@/lib/supabase/server';
 import { headers } from 'next/headers';
+import { createClient } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
 
-export const signup = async (formData: FormData) => {
+export const signup = async (_prevState: unknown, formData: FormData) => {
   const origin = (await headers()).get('origin');
+
+  // Get all form data
+  const firstName = formData.get('first-name') as string;
+  const lastName = formData.get('last-name') as string;
   const email = formData.get('email') as string;
   const password = formData.get('password') as string;
-  // Note: Your form has 'password-confirm' but the template action doesn't use it.
-  // We can add validation for it later if you like.
+
   const supabase = await createClient();
 
   const { error } = await supabase.auth.signUp({
@@ -17,15 +20,21 @@ export const signup = async (formData: FormData) => {
     password,
     options: {
       emailRedirectTo: `${origin}/auth/confirm`,
+      // Add first_name and last_name to the user's metadata
+      data: {
+        first_name: firstName,
+        last_name: lastName,
+      },
     },
   });
 
   if (error) {
-    console.error(error);
-    return redirect('/auth/sign-up?message=Could not authenticate user');
+    // Return a state object with the error message
+    return {
+      error: `Could not authenticate user: ${error.message}`,
+    };
   }
 
-  // This template requires email confirmation.
-  // You can disable this in your Supabase project settings if you want.
-  return redirect('/auth/sign-up-success'); // Redirect to a success page
+  // On success, redirect to the new success page
+  return redirect('/auth/sign-up-success');
 };

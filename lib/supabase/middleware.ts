@@ -1,63 +1,103 @@
-import { createServerClient } from '@supabase/ssr';
-import { type NextRequest, NextResponse } from 'next/server';
+import { createServerClient, type CookieOptions } from '@supabase/ssr';
+import { NextResponse, type NextRequest } from 'next/server';
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY!;
-
-// Create Supabase client
-export const createClient = (request: NextRequest) => {
-  let supabaseResponse = NextResponse.next({
+export async function updateSession(request: NextRequest) {
+  let response = NextResponse.next({
     request: {
       headers: request.headers,
     },
   });
 
-  const supabase = createServerClient(supabaseUrl, supabaseKey, {
-    cookies: {
-      getAll() {
-        return request.cookies.getAll();
-      },
-      setAll(cookiesToSet) {
-        cookiesToSet.forEach(({ name, value }) =>
-          request.cookies.set(name, value),
-        ); // Removed 'options' since it's not being used
-        supabaseResponse = NextResponse.next({
-          request,
-        });
-        cookiesToSet.forEach(
-          ({ name, value, options }) =>
-            supabaseResponse.cookies.set(name, value, options), // You can keep 'options' here if necessary
-        );
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        get(name: string) {
+          return request.cookies.get(name)?.value;
+        },
+        set(name: string, value: string, options: CookieOptions) {
+          request.cookies.set({
+            name,
+            value,
+            ...options,
+          });
+          response = NextResponse.next({
+            request: {
+              headers: request.headers,
+            },
+          });
+          response.cookies.set({
+            name,
+            value,
+            ...options,
+          });
+        },
+        remove(name: string, options: CookieOptions) {
+          request.cookies.set({
+            name,
+            value: '',
+            ...options,
+          });
+          response = NextResponse.next({
+            request: {
+              headers: request.headers,
+            },
+          });
+          response.cookies.set({
+            name,
+            value: '',
+            ...options,
+          });
+        },
       },
     },
-  });
+  );
 
-  return { supabase, supabaseResponse };
-};
-
-// The updateSession function that could be used to update or refresh the session
-export const updateSession = async (request: NextRequest) => {
-  const { supabase } = createClient(request);
-
-  // Attempt to get the current session from cookies
   const {
-    data: { session },
-    error,
-  } = await supabase.auth.getSession();
+    data: { user },
+  } = await supabase.auth.getUser();
 
-  if (error || !session) {
-    console.error('Session error: ', error);
-    throw new Error('Session not found or expired');
+  const { pathname } = request.nextUrl;
+
+  // --- Redirect logic from template ---
+  // if user is not signed in and not trying to access auth pages, redirect to login
+  if (!user && !pathname.startsWith('/auth')) {
+    const url = request.nextUrl.clone();
+    url.pathname = '/auth/login';
+    return NextResponse.redirect(url);
   }
 
-  // Here you could update the session or refresh it if needed
-  // For example, refreshing the session data
-  const { data, error: updateError } = await supabase.auth.refreshSession();
-
-  if (updateError) {
-    console.error('Session refresh failed: ', updateError);
-    throw new Error('Failed to refresh session');
+  // if user is signed in and on auth pages, redirect to dashboard
+  if (user && pathname.startsWith('/auth')) {
+    const url = request.nextUrl.clone();
+    url.pathname = '/protected'; // or your dashboard path
+    return NextResponse.redirect(url);
   }
 
-  return data;
-};
+  // if user is signed in and on root, redirect to dashboard
+  if (user && pathname === '/') {
+    const url = request.nextUrl.clone();
+    url.pathname = '/protected'; // or your dashboard path
+    return NextResponse.redirect(url);
+  }
+
+  // --- THIS WAS THE BUG ---
+  // The original template *only* protected the root route.
+  // We need to allow non-logged-in users to *see* the homepage.
+
+  // --- OUR NEW LOGIC ---
+  // If the user is not logged in, and is on the homepage, let them stay.
+  if (!user && pathname === '/') {
+    return response;
+  }
+
+  // If the user is not logged in, but is on a protected page, redirect
+  if (!user && pathname.startsWith('/protected')) {
+    const url = request.nextUrl.clone();
+    url.pathname = '/auth/login';
+    return NextResponse.redirect(url);
+  }
+
+  return response;
+}

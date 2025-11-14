@@ -53,4 +53,6 @@ next-env.d.ts
 
 # temporary / generated
 project_structure.txt
-index.html
+draft/
+
+.temp/

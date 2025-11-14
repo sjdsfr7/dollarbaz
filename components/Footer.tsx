@@ -1,51 +1,198 @@
 import Link from 'next/link';
 
+// Define SVG icons as components
+const IconTwitter = (props: React.SVGProps<SVGSVGElement>) => (
+  <svg
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.5"
+    viewBox="0 0 24 24"
+    {...props}
+  >
+    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.25 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path>
+  </svg>
+);
+const IconLinkedIn = (props: React.SVGProps<SVGSVGElement>) => (
+  <svg
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.5"
+    viewBox="0 0 24 24"
+    {...props}
+  >
+    <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6zM2 9h4v12H2z"></path>
+    <circle cx="4" cy="4" r="2"></circle>
+  </svg>
+);
+const IconInstagram = (props: React.SVGProps<SVGSVGElement>) => (
+  <svg
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.5"
+    viewBox="0 0 24 24"
+    {...props}
+  >
+    <rect width="20" height="20" x="2" y="2" rx="5" ry="5"></rect>
+    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+    <line x1="17.5" x2="17.51" y1="6.5" y2="6.5"></line>
+  </svg>
+);
+const IconTelegram = (props: React.SVGProps<SVGSVGElement>) => (
+  <svg
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.5"
+    viewBox="0 0 24 24"
+    {...props}
+  >
+    <path d="M22 2 11 13M22 2l-7 20-4-9-9-4 20-7z"></path>
+  </svg>
+);
+const IconWhatsApp = (props: React.SVGProps<SVGSVGElement>) => (
+  <svg
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.5"
+    viewBox="0 0 24 24"
+    {...props}
+  >
+    <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
+  </svg>
+);
+
 export default function Footer() {
+  const footerLinks = {
+    platform: [
+      { href: '#features', label: 'Core Banking' },
+      { href: '#trading', label: 'Trading' },
+      { href: '/protected', label: 'Dashboard' },
+      { href: '#faq', label: 'FAQ' },
+    ],
+    company: [
+      { href: '#', label: 'About Us' },
+      { href: '#', label: 'Careers' },
+      { href: '#', label: 'Contact' },
+    ],
+    legal: [
+      { href: '#', label: 'Privacy Policy' },
+      { href: '#', label: 'Terms of Service' },
+    ],
+  };
+
+  const socialLinks = [
+    { href: '#', label: 'Twitter', icon: IconTwitter },
+    { href: '#', label: 'LinkedIn', icon: IconLinkedIn },
+    { href: '#', label: 'Instagram', icon: IconInstagram },
+    { href: '#', label: 'Telegram', icon: IconTelegram },
+    { href: '#', label: 'WhatsApp', icon: IconWhatsApp },
+  ];
+
   return (
-    <footer className="footer">
-      <div className="container">
-        <div className="footer-content">
-          <div className="footer-section">
-            <h4>Product</h4>
-            <Link href="#">Core Banking</Link>
-            <Link href="#">B2B Services</Link>
-            <Link href="#">Planning</Link>
-            <Link href="#">Trading</Link>
+    <footer className="bg-brand-accent-dark text-gray-300">
+      <div className="container mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+        <div className="grid grid-cols-2 gap-8 md:grid-cols-4 lg:grid-cols-5">
+          {/* Column 1: About & Newsletter */}
+          <div className="col-span-2 md:col-span-4 lg:col-span-2">
+            <span className="footer-logo text-2xl font-bold">Dollarbaz</span>
+            <p className="mt-4 text-sm text-gray-300">
+              Stay updated with Dollarbaz news and platform updates.
+            </p>
+            <form className="mt-4 flex max-w-sm">
+              <label htmlFor="email-address" className="sr-only">
+                Email address
+              </label>
+              <input
+                type="email"
+                name="email-address"
+                id="email-address"
+                autoComplete="email"
+                required
+                className="w-full min-w-0 flex-auto rounded-l-md border-0 bg-white/5 px-3.5 py-2 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-brand-accent sm:text-sm sm:leading-6"
+                placeholder="Enter your email"
+              />
+              <button
+                type="submit"
+                className="font-poppins rounded-r-md bg-brand-accent px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-brand-accent-medium focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-accent"
+              >
+                Subscribe
+              </button>
+            </form>
           </div>
-          <div className="footer-section">
-            <h4>Company</h4>
-            <Link href="#">About</Link>
-            <Link href="#">Careers</Link>
-            <Link href="#">Press</Link>
-            <Link href="#">Contact</Link>
+
+          {/* Column 2: Platform */}
+          <div>
+            <h3 className="font-poppins text-sm font-semibold leading-6 text-white">
+              Platform
+            </h3>
+            <ul role="list" className="mt-4 space-y-2">
+              {footerLinks.platform.map((link) => (
+                <li key={link.label}>
+                  <Link
+                    href={link.href}
+                    className="text-sm text-gray-300 hover:text-white"
+                  >
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
           </div>
-          <div className="footer-section">
-            <h4>Resources</h4>
-            <Link href="#">Documentation</Link>
-            <Link href="#">API</Link>
-            <Link href="#">Support</Link>
-            <Link href="#">Status</Link>
+
+          {/* Column 3: Company */}
+          <div>
+            <h3 className="font-poppins text-sm font-semibold leading-6 text-white">
+              Company
+            </h3>
+            <ul role="list" className="mt-4 space-y-2">
+              {footerLinks.company.map((link) => (
+                <li key={link.label}>
+                  <Link
+                    href={link.href}
+                    className="text-sm text-gray-300 hover:text-white"
+                  >
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
           </div>
-          <div className="footer-section">
-            <h4>Legal</h4>
-            <Link href="#">Privacy</Link>
-            <Link href="#">Terms</Link>
-            <Link href="#">Security</Link>
-            <Link href="#">Compliance</Link>
+
+          {/* Column 4: Legal */}
+          <div>
+            <h3 className="font-poppins text-sm font-semibold leading-6 text-white">
+              Legal
+            </h3>
+            <ul role="list" className="mt-4 space-y-2">
+              {footerLinks.legal.map((link) => (
+                <li key={link.label}>
+                  <Link
+                    href={link.href}
+                    className="text-sm text-gray-300 hover:text-white"
+                  >
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
           </div>
         </div>
-        <div className="footer-bottom">
-          <p>© 2024 Dollarbaz. All rights reserved.</p>
-          <div className="legal-disclosures">
-            <p>
-              Payment accounts and cards are provided by regulated partners.
-              Instant payments availability and limits depend on your account
-              and recipient bank.
-            </p>
-            <p>
-              Trading services are offered by third-party regulated entities.
-              Capital at risk. Not investment advice.
-            </p>
+
+        {/* Bottom Bar */}
+        <div className="mt-16 border-t border-white/10 pt-8 flex flex-col items-center justify-between sm:flex-row">
+          <p className="text-xs leading-5 text-gray-300">
+            &copy; {new Date().getFullYear()} Dollarbaz. All rights reserved.
+          </p>
+          <div className="mt-4 sm:mt-0 flex space-x-6">
+            {socialLinks.map((link) => (
+              <a
+                key={link.label}
+                href={link.href}
+                className="text-gray-300 hover:text-white"
+              >
+                <span className="sr-only">{link.label}</span>
+                <link.icon className="h-5 w-5" />
+              </a>
+            ))}
           </div>
         </div>
       </div>

@@ -3,10 +3,10 @@
 import { createClient } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
 
-export const login = async (formData: FormData) => {
+export const login = async (prevState: any, formData: FormData) => {
   const email = formData.get('email') as string;
   const password = formData.get('password') as string;
-  const supabase = await createClient();
+  const supabase = createClient();
 
   const { error } = await supabase.auth.signInWithPassword({
     email,
@@ -14,8 +14,12 @@ export const login = async (formData: FormData) => {
   });
 
   if (error) {
-    return redirect('/auth/login?message=Could not authenticate user');
+    // Return a state object with the error message
+    return {
+      error: 'Could not authenticate user. Please check your credentials.',
+    };
   }
 
+  // On success, redirect to the protected dashboard
   return redirect('/protected');
 };
