@@ -62,3 +62,4 @@ draft/
 # Ignore local Supabase development files
 .supabase/
 supabase/.temp/
+supabase/functions/
