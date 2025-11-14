@@ -55,4 +55,5 @@ next-env.d.ts
 project_structure.txt
 draft/
 
+.supabase/
 .temp/
