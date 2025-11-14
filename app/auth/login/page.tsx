@@ -69,7 +69,7 @@ function SubmitButton() {
 
 export default function LoginPage() {
   // --- THIS IS THE FIX ---
-  const [state, formAction] = useActionState(login, undefined); // Changed from useFormState
+  const [state, formAction] = useActionState<{ error: string }, FormData>(login, { error: '' }); // Changed from useFormState
   // --- END FIX ---
   const [showPassword, setShowPassword] = useState(false);
 
