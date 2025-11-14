@@ -1,11 +1,9 @@
-import { createServerClient, type CookieOptions } from '@supabase/ssr';
+import { createServerClient } from '@supabase/ssr';
 import { NextResponse, type NextRequest } from 'next/server';
 
 export async function updateSession(request: NextRequest) {
-  let response = NextResponse.next({
-    request: {
-      headers: request.headers,
-    },
+  const supabaseResponse = NextResponse.next({
+    request,
   });
 
   const supabase = createServerClient(
@@ -13,41 +11,12 @@ export async function updateSession(request: NextRequest) {
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
       cookies: {
-        get(name: string) {
-          return request.cookies.get(name)?.value;
+        getAll() {
+          return request.cookies.getAll();
         },
-        set(name: string, value: string, options: CookieOptions) {
-          request.cookies.set({
-            name,
-            value,
-            ...options,
-          });
-          response = NextResponse.next({
-            request: {
-              headers: request.headers,
-            },
-          });
-          response.cookies.set({
-            name,
-            value,
-            ...options,
-          });
-        },
-        remove(name: string, options: CookieOptions) {
-          request.cookies.set({
-            name,
-            value: '',
-            ...options,
-          });
-          response = NextResponse.next({
-            request: {
-              headers: request.headers,
-            },
-          });
-          response.cookies.set({
-            name,
-            value: '',
-            ...options,
+        setAll(cookies) {
+          cookies.forEach(({ name, value, options }) => {
+            supabaseResponse.cookies.set(name, value, options);
           });
         },
       },
@@ -55,49 +24,42 @@ export async function updateSession(request: NextRequest) {
   );
 
   const {
-    data: { user },
-  } = await supabase.auth.getUser();
+    data: { session },
+  } = await supabase.auth.getSession();
 
   const { pathname } = request.nextUrl;
 
-  // --- Redirect logic from template ---
-  // if user is not signed in and not trying to access auth pages, redirect to login
-  if (!user && !pathname.startsWith('/auth')) {
-    const url = request.nextUrl.clone();
-    url.pathname = '/auth/login';
-    return NextResponse.redirect(url);
+  // --- 1. Define Public Paths ---
+  // Public paths list removed; access control handled by protected route checks.
+  // --- 2. Define Protected Paths ---
+  const isProtectedRoute = pathname.startsWith('/protected');
+
+  // --- 3. Redirect Logic ---
+
+  // RULE A: User is NOT logged in
+  if (!session) {
+    // If user is not logged in and tries to access a protected route
+    if (isProtectedRoute) {
+      // Redirect to login
+      return NextResponse.redirect(new URL('/auth/login', request.url));
+    }
+    // Otherwise, allow access (to public pages like homepage, login, etc.)
+    return supabaseResponse;
   }
 
-  // if user is signed in and on auth pages, redirect to dashboard
-  if (user && pathname.startsWith('/auth')) {
-    const url = request.nextUrl.clone();
-    url.pathname = '/protected'; // or your dashboard path
-    return NextResponse.redirect(url);
+  // RULE B: User IS logged in
+  if (session) {
+    // If user is logged in and tries to access login/signup pages,
+    // redirect them to their dashboard.
+    if (
+      pathname.startsWith('/auth/login') ||
+      pathname.startsWith('/auth/sign-up')
+    ) {
+      return NextResponse.redirect(new URL('/protected', request.url));
+    }
+    // Otherwise, allow access to all other pages (including public and protected)
+    return supabaseResponse;
   }
 
-  // if user is signed in and on root, redirect to dashboard
-  if (user && pathname === '/') {
-    const url = request.nextUrl.clone();
-    url.pathname = '/protected'; // or your dashboard path
-    return NextResponse.redirect(url);
-  }
-
-  // --- THIS WAS THE BUG ---
-  // The original template *only* protected the root route.
-  // We need to allow non-logged-in users to *see* the homepage.
-
-  // --- OUR NEW LOGIC ---
-  // If the user is not logged in, and is on the homepage, let them stay.
-  if (!user && pathname === '/') {
-    return response;
-  }
-
-  // If the user is not logged in, but is on a protected page, redirect
-  if (!user && pathname.startsWith('/protected')) {
-    const url = request.nextUrl.clone();
-    url.pathname = '/auth/login';
-    return NextResponse.redirect(url);
-  }
-
-  return response;
+  return supabaseResponse;
 }
