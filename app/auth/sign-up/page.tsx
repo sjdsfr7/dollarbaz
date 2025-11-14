@@ -2,11 +2,11 @@
 
 import Link from 'next/link';
 import { signup } from './actions';
-// --- THIS IS THE FIX ---
 import { useFormStatus } from 'react-dom';
-import { useActionState } from 'react'; // Changed from useFormState
-// --- END FIX ---
+import { useActionState } from 'react';
 import { useState, useEffect } from 'react';
+// --- 1. Import Turnstile ---
+import { Turnstile } from '@marsidev/react-turnstile';
 
 // --- SVG Icons (from signupdraft.html) ---
 const IconEye = (props: React.SVGProps<SVGSVGElement>) => (
@@ -47,7 +47,7 @@ const IconGoogle = (props: React.SVGProps<SVGSVGElement>) => (
 );
 const IconApple = (props: React.SVGProps<SVGSVGElement>) => (
   <svg viewBox="0 0 24 24" fill="currentColor" {...props}>
-    <path d="M12.01 17.06c-.36 0-.72-.03-1.07-.08-.6-.09-.99-.19-1.33-.31-.48-.18-.81-.39-1.1-.64-.29-.25-.52-.56-.7-.91-.18-.35-.31-.75-.39-1.21-.08-.46-.12-.92-.12-1.38s.04-.92.12-1.38c.08-.46.21-.86.39-1.21.18-.35.41-.66.7-.91.29-.25.62-.46 1.1-.64.34-.12.73-.22 1.33-.31.35-.05.71-.08 1.07-.08.36 0 .72.03 1.07.08.6.09.99.19 1.33.31.48.18.81-.39 1.1.64.29.25.52.56.7.91.18.35.31.75.39-1.21-.08-.46-.12.92-.12 1.38s-.04.92-.12 1.38c-.08.46-.21.86-.39-1.21-.18-.35-.41-.66-.7.91-.29-.25-.62.46-1.1.64-.34-.12-.73-.22-1.33-.31-.35.05-.71-.08-1.07.08zM12 1C9.64 1 7.73 2.22 6.46 3.98c-1.68 2.34-2.19 5.22-1.78 7.58.31 1.76 1.4 3.3 2.89 4.38 1.17.84 2.5 1.34 3.99 1.34.34 0 .68-.03 1.01-.08.43-.07.82-.16 1.18-.28.4-.13.73-.29 1.02-.49.29-.2.53-.44.72-.73.01.01 0 0 0 0zM10.02 3.19c.3-.39.58-.75.83-1.08.06.04.1.07.15.11.05.04.1.09.15.14.05.05.1.1.14.15l.all-c_popover.md-0-0-1.all-c_popover.md-0-0-1.all-c_popover.md-0-0-1.all-c_popover.md-0-0-111c.04.05.08.1.12.16.04.06.08.12.11.19.03.07.06.14.08.22.02.08.04.16.05.25.01.09.02.18.02.28s0 .19-.02.28c-.01.09-.03.17-.05.25-.02.08-.05.15-.08.22-.03.07-.07.13-.11.19-.04.06-.08.11-.12.16-.04.05-.07.09-.11.11-.04.05-.09.1-.14.15-.05.05-.1.09-.15.14-.05.04-.1.08-.15.11-.25-.33-.53-.69-.83-1.08z" />
+    <path d="M12.01 17.06c-.36 0-.72-.03-1.07-.08-.6-.09-.99-.19-1.33-.31-.48-.18-.81-.39-1.1-.64-.29-.25-.52-.56-.7-.91-.18-.35-.31-.75-.39-1.21-.08-.46-.12-.92-.12-1.38s.04-.92.12-1.38c.08-.46.21-.86.39-1.21.18-.35.41-.66.7-.91.29-.25.62-.46 1.1-.64.34-.12.73-.22 1.33-.31.35-.05.71-.08 1.07-.08.36 0 .72.03 1.07.08.6.09.99.19 1.33.31.48-.18.81-.39 1.1.64.29.25.52.56.7.91.18.35.31.75.39-1.21-.08-.46-.12.92-.12 1.38s-.04.92-.12 1.38c-.08.46-.21.86-.39-1.21-.18-.35-.41-.66-.7.91-.29-.25-.62.46-1.1.64-.34-.12-.73-.22-1.33-.31-.35.05-.71-.08-1.07.08zM12 1C9.64 1 7.73 2.22 6.46 3.98c-1.68 2.34-2.19 5.22-1.78 7.58.31 1.76 1.4 3.3 2.89 4.38 1.17.84 2.5 1.34 3.99 1.34.34 0 .68-.03 1.01-.08.43-.07.82-.16 1.18-.28.4-.13.73-.29 1.02-.49.29-.2.53-.44.72-.73.01.01 0 0 0 0zM10.02 3.19c.3-.39.58-.75.83-1.08.06.04.1.07.15.11.05.04.1.09.15.14.05.05.1.1.14.15l.all-c_popover.md-0-0-1.all-c_popover.md-0-0-1.all-c_popover.md-0-0-1.all-c_popover.md-0-0-111c.04.05.08.1.12.16.04.06.08.12.11.19.03.07.06.14.08.22.02.08.04.16.05.25.01.09.02.18.02.28s0 .19-.02.28c-.01.09-.03.17-.05.25-.02.08-.05.15-.08.22-.03.07-.07.13-.11.19-.04.06-.08.11-.12.16-.04.05-.07.09-.11.11-.04.05-.09.1-.14.15-.05.05-.1.09-.15.14-.05.04-.1.08-.15.11-.25-.33-.53-.69-.83-1.08z" />
   </svg>
 );
 
@@ -150,14 +150,15 @@ function PasswordStrengthIndicator({ password = '' }) {
 }
 
 export default function SignUpPage() {
-  // --- THIS IS THE FIX ---
-  const [state, formAction] = useActionState(signup, undefined); // Changed from useFormState
-  // --- END FIX ---
+  const [state, formAction] = useActionState(signup, undefined);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [passwordsMatch, setPasswordsMatch] = useState(true);
+
+  // --- 2. State for Turnstile token ---
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
 
   useEffect(() => {
     // Check if passwords match whenever they change
@@ -338,6 +339,27 @@ export default function SignUpPage() {
               </label>
             </div>
           </div>
+
+          {/* --- 3. Add Turnstile Widget and Hidden Input --- */}
+          <div className="flex justify-center">
+            <Turnstile
+              siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY!}
+              onSuccess={(token) => {
+                setTurnstileToken(token);
+              }}
+              onError={() => {
+                setTurnstileToken(null);
+              }}
+              onExpire={() => {
+                setTurnstileToken(null);
+              }}
+            />
+          </div>
+          <input
+            type="hidden"
+            name="cf-turnstile-response"
+            value={turnstileToken || ''}
+          />
 
           <div>
             <SubmitButton />
