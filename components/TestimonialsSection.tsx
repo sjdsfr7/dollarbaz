@@ -1,4 +1,4 @@
-import { AnimatedFadeIn } from '@/components/ui/AnimatedFadeIn';
+import AnimatedFadeIn from '@/components/ui/AnimatedFadeIn';
 import Image from 'next/image';
 
 // This is a server component
