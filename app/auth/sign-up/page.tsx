@@ -157,20 +157,49 @@ export default function SignUpPage() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   // --- States for Validation ---
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [termsAgreed, setTermsAgreed] = useState(false);
-  const [isTurnstileVerified, setIsTurnstileVerified] = useState(false);
+  const [formData, setFormData] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    password: '',
+    confirmPassword: '',
+    termsAgreed: false,
+  });
 
   const [passwordsMatch, setPasswordsMatch] = useState(true);
   const [isFormValid, setIsFormValid] = useState(false);
+
+  // --- NEW: State for Turnstile ---
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
+  const [turnstileStatus, setTurnstileStatus] = useState<
+    'loading' | 'verified' | 'error' | 'expired'
+  >('loading');
+  const [turnstileSiteKey, setTurnstileSiteKey] = useState<string | null>(null);
+
+  // --- NEW: Check for env variable on client ---
+  useEffect(() => {
+    const key = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
+    if (key) {
+      setTurnstileSiteKey(key);
+    } else {
+      console.error(
+        'Turnstile Site Key is missing. Check .env.local and Vercel environment variables.',
+      );
+      setTurnstileStatus('error');
+    }
+  }, []);
 
   // --- Combined Validation Logic ---
   useEffect(() => {
+    const {
+      firstName,
+      lastName,
+      email,
+      password,
+      confirmPassword,
+      termsAgreed,
+    } = formData;
+
     const isEmailValid =
       email.length > 0 && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
     const isPasswordValid = password.length >= 8;
@@ -187,22 +216,35 @@ export default function SignUpPage() {
       isPasswordValid &&
       doPasswordsMatch &&
       termsAgreed &&
-      isTurnstileVerified // <-- Turnstile is now part of the check
+      turnstileStatus === 'verified' // <-- Check status instead of just token
     ) {
       setIsFormValid(true);
     } else {
       setIsFormValid(false);
     }
-  }, [
-    firstName,
-    lastName,
-    email,
-    password,
-    confirmPassword,
-    termsAgreed,
-    isTurnstileVerified,
-  ]);
+  }, [formData, turnstileStatus]);
 
+  // Handler for form input changes
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value, type, checked } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: type === 'checkbox' ? checked : value,
+    }));
+  };
+
+  function setPassword(value: string) {
+    setFormData((prev) => ({
+      ...prev,
+      password: value,
+    }));
+  }
+  function setConfirmPassword(value: string) {
+    setFormData((prev) => ({
+      ...prev,
+      confirmPassword: value,
+    }));
+  }
   return (
     <div className="w-full max-w-md space-y-8">
       {/* Auth Form Card */}
@@ -245,7 +287,7 @@ export default function SignUpPage() {
                   required
                   className="appearance-none rounded-lg relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-brand-accent focus:border-brand-accent focus:z-10 sm:text-sm transition-all"
                   placeholder="First name"
-                  onChange={(e) => setFirstName(e.target.value)}
+                  onChange={handleInputChange}
                 />
               </div>
               <div>
@@ -260,7 +302,7 @@ export default function SignUpPage() {
                   required
                   className="appearance-none rounded-lg relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-brand-accent focus:border-brand-accent focus:z-10 sm:text-sm transition-all"
                   placeholder="Last name"
-                  onChange={(e) => setLastName(e.target.value)}
+                  onChange={handleInputChange}
                 />
               </div>
             </div>
@@ -278,7 +320,7 @@ export default function SignUpPage() {
                 required
                 className="appearance-none rounded-lg relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-brand-accent focus:border-brand-accent focus:z-10 sm:text-sm transition-all"
                 placeholder="Email address"
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={handleInputChange}
               />
             </div>
 
@@ -296,7 +338,10 @@ export default function SignUpPage() {
                   required
                   className="appearance-none rounded-lg relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-brand-accent focus:border-brand-accent focus:z-10 sm:text-sm transition-all"
                   placeholder="Password"
-                  onChange={(e) => setPassword(e.target.value)}
+                  onChange={(e) => {
+                    handleInputChange(e);
+                    setPassword(e.target.value);
+                  }}
                 />
                 <span
                   className="password-toggle"
@@ -309,7 +354,7 @@ export default function SignUpPage() {
                   )}
                 </span>
               </div>
-              <PasswordStrengthIndicator password={password} />
+              <PasswordStrengthIndicator password={formData.password} />
             </div>
 
             {/* Confirm Password Field */}
@@ -332,7 +377,10 @@ export default function SignUpPage() {
                       : 'focus:ring-red-500 focus:border-red-500'
                   } focus:z-10 sm:text-sm transition-all`}
                   placeholder="Confirm Password"
-                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  onChange={(e) => {
+                    handleInputChange(e);
+                    setConfirmPassword(e.target.value);
+                  }}
                 />
                 <span
                   className="password-toggle"
@@ -361,7 +409,7 @@ export default function SignUpPage() {
                 type="checkbox"
                 required
                 className="h-4 w-4 text-brand-accent focus:ring-brand-accent border-gray-300 rounded"
-                onChange={(e) => setTermsAgreed(e.target.checked)}
+                onChange={handleInputChange}
               />
               <label
                 htmlFor="terms-agree"
@@ -378,24 +426,46 @@ export default function SignUpPage() {
             </div>
           </div>
 
-          {/* --- Turnstile Widget --- */}
+          {/* --- NEW: Turnstile Widget & Status --- */}
           <div className="flex justify-center">
-            <Turnstile
-              siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY!}
-              onSuccess={(token) => {
-                setTurnstileToken(token);
-                setIsTurnstileVerified(true);
-              }}
-              onError={() => {
-                setTurnstileToken(null);
-                setIsTurnstileVerified(false);
-              }}
-              onExpire={() => {
-                setTurnstileToken(null);
-                setIsTurnstileVerified(false);
-              }}
-            />
+            {turnstileSiteKey ? (
+              <Turnstile
+                siteKey={turnstileSiteKey}
+                onSuccess={(token) => {
+                  setTurnstileToken(token);
+                  setTurnstileStatus('verified');
+                }}
+                onError={() => {
+                  setTurnstileToken(null);
+                  setTurnstileStatus('error');
+                }}
+                onExpire={() => {
+                  setTurnstileToken(null);
+                  setTurnstileStatus('expired');
+                }}
+              />
+            ) : (
+              <p className="text-sm text-red-500">
+                CAPTCHA is not configured. Please contact support.
+              </p>
+            )}
           </div>
+          {turnstileStatus === 'loading' && (
+            <p className="text-sm text-gray-500 text-center">
+              Verifying you are human...
+            </p>
+          )}
+          {turnstileStatus === 'error' && (
+            <p className="text-sm text-red-500 text-center">
+              Could not load CAPTCHA. Please refresh.
+            </p>
+          )}
+          {turnstileStatus === 'expired' && (
+            <p className="text-sm text-red-500 text-center">
+              Verification expired. Please refresh.
+            </p>
+          )}
+
           <input
             type="hidden"
             name="cf-turnstile-response"
