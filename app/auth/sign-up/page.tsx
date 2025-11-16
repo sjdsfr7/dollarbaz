@@ -46,7 +46,7 @@ const IconGoogle = (props: React.SVGProps<SVGSVGElement>) => (
 );
 const IconApple = (props: React.SVGProps<SVGSVGElement>) => (
   <svg viewBox="0 0 24 24" fill="currentColor" {...props}>
-    <path d="M12.01 17.06c-.36 0-.72-.03-1.07-.08-.6-.09-.99-.19-1.33-.31-.48-.18-.81-.39-1.1-.64-.29-.25-.52-.56-.7-.91-.18-.35-.31-.75-.39-1.21-.08-.46-.12-.92-.12-1.38s.04-.92.12-1.38c.08-.46.21-.86.39-1.21.18-.35.41-.66.7-.91.29-.25.62-.46 1.1-.64.34-.12.73-.22 1.33-.31.35-.05.71-.08 1.07-.08.36 0 .72.03 1.07.08.6.09.99.19 1.33.31.48-.18.81-.39 1.1.64.29.25.52.56.7.91.18.35.31.75.39-1.21-.08-.46-.12-.92-.12 1.38s-.04.92-.12 1.38c-.08.46-.21.86-.39-1.21-.18-.35-.41-.66-.7.91-.29-.25-.62.46-1.1.64-.34-.12-.73-.22-1.33-.31-.35.05-.71-.08-1.07.08zM12 1C9.64 1 7.73 2.22 6.46 3.98c-1.68 2.34-2.19 5.22-1.78 7.58.31 1.76 1.4 3.3 2.89 4.38 1.17.84 2.5 1.34 3.99 1.34.34 0 .68-.03 1.01-.08.43-.07.82-.16 1.18-.28.4-.13.73-.29 1.02-.49.29-.2.53-.44.72-.73.01.01 0 0 0 0zM10.02 3.19c.3-.39.58-.75.83-1.08.06.04.1.07.15.11.05.04.1.09.15.14.05.05.1.1.14.15l.all-c_popover.md-0-0-1.all-c_popover.md-0-0-1.all-c_popover.md-0-0-1.all-c_popover.md-0-0-111c.04.05.08.1.12.16.04.06.08.12.11.19.03.07.06.14.08.22.02.08.04.16.05.25.01.09.02.18.02.28s0 .19-.02.28c-.01.09-.03.17-.05.25-.02.08-.05.15-.08.22-.03.07-.07.13-.11.19-.04.06-.08.11-.12.16-.04.05-.07.09-.11.11-.04.05-.09.1-.14.15-.05.05-.1.09-.15.14-.05.04-.1.08-.15.11-.25-.33-.53-.69-.83-1.08z" />
+    <path d="M12.01 17.06c-.36 0-.72-.03-1.07-.08-.6-.09-.99-.19-1.33-.31-.48-.18-.81-.39-1.1-.64-.29-.25-.52-.56-.7-.91-.18-.35-.31-.75-.39-1.21-.08-.46-.12-.92-.12-1.38s.04-.92.12-1.38c.08-.46.21-.86.39-1.21.18-.35.41-.66.7-.91.29-.25.62-.46 1.1-.64.34-.12.73-.22 1.33-.31.35-.05.71-.08 1.07-.08.36 0 .72.03 1.07.08.6.09.99.19 1.33.31.48-.18.81-.39 1.1.64.29.25.52.56.7.91.18.35.31.75.39-1.21-.08-.46-.12-.92-.12 1.38s-.04.92-.12 1.38c-.08-.46-.21.86-.39-1.21-.18-.35-.41-.66-.7.91-.29-.25-.62.46-1.1.64-.34-.12-.73-.22-1.33-.31-.35.05-.71-.08-1.07.08zM12 1C9.64 1 7.73 2.22 6.46 3.98c-1.68 2.34-2.19 5.22-1.78 7.58.31 1.76 1.4 3.3 2.89 4.38 1.17.84 2.5 1.34 3.99 1.34.34 0 .68-.03 1.01-.08.43-.07.82-.16 1.18-.28.4-.13.73-.29 1.02-.49.29-.2.53-.44.72-.73.01.01 0 0 0 0zM10.02 3.19c.3-.39.58-.75.83-1.08.06.04.1.07.15.11.05.04.1.09.15.14.05.05.1.1.14.15l.all-c_popover.md-0-0-1.all-c_popover.md-0-0-1.all-c_popover.md-0-0-1.all-c_popover.md-0-0-111c.04.05.08.1.12.16.04.06.08.12.11.19.03.07.06.14.08.22.02.08.04.16.05.25.01.09.02.18.02.28s0 .19-.02.28c-.01.09-.03.17-.05.25-.02.08-.05.15-.08.22-.03.07-.07.13-.11.19-.04.06-.08.11-.12.16-.04.05-.07.09-.11.11-.04.05-.09.1-.14.15-.05.05-.1.09-.15.14-.05.04-.1.08-.15.11-.25-.33-.53-.69-.83-1.08z" />
   </svg>
 );
 
@@ -156,27 +156,26 @@ export default function SignUpPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  // --- States for Validation ---
+  // --- SIMPLIFIED STATE: One object for all form data ---
   const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
+    'first-name': '',
+    'last-name': '',
     email: '',
     password: '',
-    confirmPassword: '',
-    termsAgreed: false,
+    'confirm-password': '',
+    'terms-agree': false,
   });
 
   const [passwordsMatch, setPasswordsMatch] = useState(true);
   const [isFormValid, setIsFormValid] = useState(false);
 
-  // --- NEW: State for Turnstile ---
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
   const [turnstileStatus, setTurnstileStatus] = useState<
     'loading' | 'verified' | 'error' | 'expired'
   >('loading');
   const [turnstileSiteKey, setTurnstileSiteKey] = useState<string | null>(null);
 
-  // --- NEW: Check for env variable on client ---
+  // Check for env variable on client
   useEffect(() => {
     const key = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
     if (key) {
@@ -189,42 +188,39 @@ export default function SignUpPage() {
     }
   }, []);
 
-  // --- Combined Validation Logic ---
+  // --- SIMPLIFIED VALIDATION LOGIC ---
   useEffect(() => {
-    const {
-      firstName,
-      lastName,
-      email,
-      password,
-      confirmPassword,
-      termsAgreed,
-    } = formData;
-
     const isEmailValid =
-      email.length > 0 && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-    const isPasswordValid = password.length >= 8;
-    const doPasswordsMatch = password === confirmPassword;
+      formData.email.length > 0 &&
+      /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email);
+    const isPasswordValid = formData.password.length >= 8;
+    const doPasswordsMatch = formData.password === formData['confirm-password'];
 
     // Update password match status
-    setPasswordsMatch(doPasswordsMatch || confirmPassword.length === 0);
+    setPasswordsMatch(
+      doPasswordsMatch || formData['confirm-password'].length === 0,
+    );
 
     // Check all conditions
-    if (
-      firstName.trim() !== '' &&
-      lastName.trim() !== '' &&
+    const allFieldsFilled =
+      formData['first-name'].trim() !== '' &&
+      formData['last-name'].trim() !== '' &&
       isEmailValid &&
       isPasswordValid &&
-      doPasswordsMatch &&
-      termsAgreed &&
-      turnstileStatus === 'verified' // <-- Check status instead of just token
+      doPasswordsMatch;
+
+    if (
+      allFieldsFilled &&
+      formData['terms-agree'] &&
+      turnstileStatus === 'verified'
     ) {
       setIsFormValid(true);
     } else {
       setIsFormValid(false);
     }
-  }, [formData, turnstileStatus]);
+  }, [formData, turnstileStatus]); // Only depends on these two states
 
-  // Handler for form input changes
+  // --- SIMPLIFIED HANDLER: Updates the single formData object ---
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target;
     setFormData((prev) => ({
@@ -233,18 +229,6 @@ export default function SignUpPage() {
     }));
   };
 
-  function setPassword(value: string) {
-    setFormData((prev) => ({
-      ...prev,
-      password: value,
-    }));
-  }
-  function setConfirmPassword(value: string) {
-    setFormData((prev) => ({
-      ...prev,
-      confirmPassword: value,
-    }));
-  }
   return (
     <div className="w-full max-w-md space-y-8">
       {/* Auth Form Card */}
@@ -281,13 +265,14 @@ export default function SignUpPage() {
                 </label>
                 <input
                   id="first-name"
-                  name="first-name"
+                  name="first-name" // This MUST match the state key
                   type="text"
                   autoComplete="given-name"
                   required
                   className="appearance-none rounded-lg relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-brand-accent focus:border-brand-accent focus:z-10 sm:text-sm transition-all"
                   placeholder="First name"
                   onChange={handleInputChange}
+                  value={formData['first-name']}
                 />
               </div>
               <div>
@@ -296,13 +281,14 @@ export default function SignUpPage() {
                 </label>
                 <input
                   id="last-name"
-                  name="last-name"
+                  name="last-name" // This MUST match the state key
                   type="text"
                   autoComplete="family-name"
                   required
                   className="appearance-none rounded-lg relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-brand-accent focus:border-brand-accent focus:z-10 sm:text-sm transition-all"
                   placeholder="Last name"
                   onChange={handleInputChange}
+                  value={formData['last-name']}
                 />
               </div>
             </div>
@@ -314,13 +300,14 @@ export default function SignUpPage() {
               </label>
               <input
                 id="email"
-                name="email"
+                name="email" // This MUST match the state key
                 type="email"
                 autoComplete="email"
                 required
                 className="appearance-none rounded-lg relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-brand-accent focus:border-brand-accent focus:z-10 sm:text-sm transition-all"
                 placeholder="Email address"
                 onChange={handleInputChange}
+                value={formData.email}
               />
             </div>
 
@@ -332,16 +319,14 @@ export default function SignUpPage() {
               <div className="relative">
                 <input
                   id="password"
-                  name="password"
+                  name="password" // This MUST match the state key
                   type={showPassword ? 'text' : 'password'}
                   autoComplete="new-password"
                   required
                   className="appearance-none rounded-lg relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-brand-accent focus:border-brand-accent focus:z-10 sm:text-sm transition-all"
                   placeholder="Password"
-                  onChange={(e) => {
-                    handleInputChange(e);
-                    setPassword(e.target.value);
-                  }}
+                  onChange={handleInputChange}
+                  value={formData.password}
                 />
                 <span
                   className="password-toggle"
@@ -365,7 +350,7 @@ export default function SignUpPage() {
               <div className="relative">
                 <input
                   id="confirm-password"
-                  name="confirm-password"
+                  name="confirm-password" // This MUST match the state key
                   type={showConfirmPassword ? 'text' : 'password'}
                   autoComplete="new-password"
                   required
@@ -377,10 +362,8 @@ export default function SignUpPage() {
                       : 'focus:ring-red-500 focus:border-red-500'
                   } focus:z-10 sm:text-sm transition-all`}
                   placeholder="Confirm Password"
-                  onChange={(e) => {
-                    handleInputChange(e);
-                    setConfirmPassword(e.target.value);
-                  }}
+                  onChange={handleInputChange}
+                  value={formData['confirm-password']}
                 />
                 <span
                   className="password-toggle"
@@ -405,11 +388,12 @@ export default function SignUpPage() {
             <div className="flex items-center">
               <input
                 id="terms-agree"
-                name="terms-agree"
+                name="terms-agree" // This MUST match the state key
                 type="checkbox"
                 required
                 className="h-4 w-4 text-brand-accent focus:ring-brand-accent border-gray-300 rounded"
                 onChange={handleInputChange}
+                checked={formData['terms-agree']}
               />
               <label
                 htmlFor="terms-agree"
@@ -426,7 +410,7 @@ export default function SignUpPage() {
             </div>
           </div>
 
-          {/* --- NEW: Turnstile Widget & Status --- */}
+          {/* --- Turnstile Widget & Status --- */}
           <div className="flex justify-center">
             {turnstileSiteKey ? (
               <Turnstile
