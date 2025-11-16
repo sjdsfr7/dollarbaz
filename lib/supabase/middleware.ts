@@ -1,4 +1,4 @@
-import { createServerClient } from '@supabase/ssr';
+import { createServerClient, type CookieOptions } from '@supabase/ssr';
 import { NextResponse, type NextRequest } from 'next/server';
 
 export async function updateSession(request: NextRequest) {
@@ -11,13 +11,14 @@ export async function updateSession(request: NextRequest) {
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
       cookies: {
-        getAll() {
-          return request.cookies.getAll();
+        get(name: string) {
+          return request.cookies.get(name)?.value;
         },
-        setAll(cookies) {
-          cookies.forEach(({ name, value, options }) => {
-            supabaseResponse.cookies.set(name, value, options);
-          });
+        set(name: string, value: string, options: CookieOptions) {
+          supabaseResponse.cookies.set({ name, value, ...options });
+        },
+        remove(name: string, options: CookieOptions) {
+          supabaseResponse.cookies.set({ name, value: '', ...options });
         },
       },
     },
@@ -30,7 +31,21 @@ export async function updateSession(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // --- 1. Define Public Paths ---
-  // Public paths list removed; access control handled by protected route checks.
+  // These paths are accessible to everyone, logged in or not.
+  const publicPaths = [
+    '/', // Homepage
+    '/auth/login',
+    '/auth/sign-up',
+    '/auth/forgot-password',
+    '/auth/update-password',
+    '/auth/sign-up-success',
+    '/auth/confirm',
+  ];
+
+  // Check if the current path is a public one
+  // We use .startsWith() for /auth/confirm which might have query params
+  const isPublicPath = publicPaths.some((path) => pathname.startsWith(path));
+
   // --- 2. Define Protected Paths ---
   const isProtectedRoute = pathname.startsWith('/protected');
 
@@ -38,12 +53,12 @@ export async function updateSession(request: NextRequest) {
 
   // RULE A: User is NOT logged in
   if (!session) {
-    // If user is not logged in and tries to access a protected route
-    if (isProtectedRoute) {
+    // If user is not logged in and tries to access a protected route or a non-public page
+    if (isProtectedRoute || !isPublicPath) {
       // Redirect to login
       return NextResponse.redirect(new URL('/auth/login', request.url));
     }
-    // Otherwise, allow access (to public pages like homepage, login, etc.)
+    // Allow access to public pages like homepage, login, etc.
     return supabaseResponse;
   }
 
