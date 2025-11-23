@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 
-// Use SVGs as components for icons
+// --- Icons ---
 const IconSearch = (props: React.SVGProps<SVGSVGElement>) => (
   <svg viewBox="0 0 20 20" fill="currentColor" {...props}>
     <path
@@ -64,12 +64,12 @@ export default function Header() {
     setIsMobileMenuOpen(!isMobileMenuOpen);
   };
 
+  // --- REFINED NAVIGATION LINKS ---
   const navLinks = [
-    { href: '#home', label: 'Home' },
+    { href: '#legacy', label: 'Legacy' },
     { href: '#features', label: 'Core Banking' },
     { href: '#trading', label: 'Trading' },
-    { href: '/protected', label: 'Dashboard' }, // Link to template's page
-    { href: '#faq', label: 'Help/Support' },
+    { href: '#contact', label: 'Contact Us' },
   ];
 
   return (
@@ -84,8 +84,8 @@ export default function Header() {
           <div className="flex h-16 items-center justify-between">
             {/* Logo */}
             <div className="flex-shrink-0">
-              <Link href="#home" className="flex items-center">
-                <span className="gradient-logo text-2xl font-bold">
+              <Link href="/" className="flex items-center group">
+                <span className="gradient-logo text-2xl font-bold transition-transform duration-300 group-hover:scale-105">
                   Dollarbaz
                 </span>
               </Link>
@@ -155,7 +155,7 @@ export default function Header() {
           isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
-        <div className="relative w-64 max-w-xs bg-white shadow-xl">
+        <div className="relative w-64 max-w-xs bg-white shadow-xl h-full flex flex-col">
           <div className="absolute top-0 right-0 pt-4 pr-4">
             <button
               id="mobile-menu-close-btn"
@@ -167,7 +167,16 @@ export default function Header() {
               <IconClose className="h-6 w-6" />
             </button>
           </div>
-          <div className="space-y-1 px-2 pt-16">
+
+          <div className="px-4 pt-16 pb-4">
+            <Link href="/" onClick={toggleMobileMenu} className="block mb-8">
+              <span className="gradient-logo text-2xl font-bold">
+                Dollarbaz
+              </span>
+            </Link>
+          </div>
+
+          <div className="space-y-1 px-2">
             {navLinks.map((link) => (
               <Link
                 key={link.href}
@@ -179,7 +188,8 @@ export default function Header() {
               </Link>
             ))}
           </div>
-          <div className="mt-6 space-y-2 px-2">
+
+          <div className="mt-auto p-4 space-y-2 border-t border-gray-100">
             <Link
               href="/auth/sign-up"
               onClick={toggleMobileMenu}
@@ -198,8 +208,8 @@ export default function Header() {
         </div>
         <div
           id="mobile-menu-overlay"
-          onClick={toggleMobileMenu}
           className="flex-1 bg-black/30"
+          onClick={toggleMobileMenu}
         ></div>
       </div>
     </>

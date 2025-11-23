@@ -69,35 +69,54 @@ export default function Footer() {
       { href: '#faq', label: 'FAQ' },
     ],
     company: [
-      { href: '#', label: 'About Us' },
-      { href: '#', label: 'Careers' },
-      { href: '#', label: 'Contact' },
+      { href: '#legacy', label: 'Legacy' }, // Added Legacy link
+      { href: '#about', label: 'About Us' },
+      { href: '#contact', label: 'Contact' },
     ],
     legal: [
-      { href: '#', label: 'Privacy Policy' },
-      { href: '#', label: 'Terms of Service' },
+      { href: '/privacy', label: 'Privacy Policy' },
+      { href: '/terms', label: 'Terms of Service' },
     ],
   };
 
+  // --- ACTUAL SOCIAL MEDIA LINKS ---
   const socialLinks = [
-    { href: '#', label: 'Twitter', icon: IconTwitter },
-    { href: '#', label: 'LinkedIn', icon: IconLinkedIn },
-    { href: '#', label: 'Instagram', icon: IconInstagram },
-    { href: '#', label: 'Telegram', icon: IconTelegram },
-    { href: '#', label: 'WhatsApp', icon: IconWhatsApp },
+    {
+      href: 'https://twitter.com/dollarbaz',
+      label: 'Twitter',
+      icon: IconTwitter,
+    },
+    {
+      href: 'https://linkedin.com/company/dollarbaz',
+      label: 'LinkedIn',
+      icon: IconLinkedIn,
+    },
+    {
+      href: 'https://www.instagram.com/dollarbazcom/',
+      label: 'Instagram',
+      icon: IconInstagram,
+    },
+    {
+      href: 'https://t.me/Dollarbazbot',
+      label: 'Telegram',
+      icon: IconTelegram,
+    },
+    { href: 'https://wa.me/1234567890', label: 'WhatsApp', icon: IconWhatsApp },
   ];
 
   return (
-    <footer className="bg-brand-accent-dark text-gray-300">
+    <footer className="bg-brand-accent-dark text-gray-300 border-t border-white/10">
       <div className="container mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
         <div className="grid grid-cols-2 gap-8 md:grid-cols-4 lg:grid-cols-5">
-          {/* Column 1: About & Newsletter */}
+          {/* Brand Column */}
           <div className="col-span-2 md:col-span-4 lg:col-span-2">
             <span className="footer-logo text-2xl font-bold">Dollarbaz</span>
-            <p className="mt-4 text-sm text-gray-300">
-              Stay updated with Dollarbaz news and platform updates.
+            <p className="mt-4 text-sm text-gray-300 max-w-xs">
+              Your all-in-one platform for global finance. Secure, fast, and
+              reliable core banking and trading.
             </p>
-            <form className="mt-4 flex max-w-sm">
+            {/* Newsletter */}
+            <form className="mt-6 flex max-w-sm">
               <label htmlFor="email-address" className="sr-only">
                 Email address
               </label>
@@ -129,7 +148,7 @@ export default function Footer() {
                 <li key={link.label}>
                   <Link
                     href={link.href}
-                    className="text-sm text-gray-300 hover:text-white"
+                    className="text-sm text-gray-300 hover:text-white transition-colors"
                   >
                     {link.label}
                   </Link>
@@ -148,7 +167,7 @@ export default function Footer() {
                 <li key={link.label}>
                   <Link
                     href={link.href}
-                    className="text-sm text-gray-300 hover:text-white"
+                    className="text-sm text-gray-300 hover:text-white transition-colors"
                   >
                     {link.label}
                   </Link>
@@ -167,7 +186,7 @@ export default function Footer() {
                 <li key={link.label}>
                   <Link
                     href={link.href}
-                    className="text-sm text-gray-300 hover:text-white"
+                    className="text-sm text-gray-300 hover:text-white transition-colors"
                   >
                     {link.label}
                   </Link>
@@ -179,7 +198,7 @@ export default function Footer() {
 
         {/* Bottom Bar */}
         <div className="mt-16 border-t border-white/10 pt-8 flex flex-col items-center justify-between sm:flex-row">
-          <p className="text-xs leading-5 text-gray-300">
+          <p className="text-xs leading-5 text-gray-400">
             &copy; {new Date().getFullYear()} Dollarbaz. All rights reserved.
           </p>
           <div className="mt-4 sm:mt-0 flex space-x-6">
@@ -187,7 +206,9 @@ export default function Footer() {
               <a
                 key={link.label}
                 href={link.href}
-                className="text-gray-300 hover:text-white"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-gray-400 hover:text-white transition-colors transform hover:scale-110"
               >
                 <span className="sr-only">{link.label}</span>
                 <link.icon className="h-5 w-5" />
