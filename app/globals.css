@@ -1,9 +1,7 @@
-/* --- Shadcn/ui base styles (from template) --- */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* --- Shadcn/ui theme variables (from template) --- */
 @layer base {
   :root {
     --background: 0 0% 100%;
@@ -38,147 +36,66 @@
   }
 
   .dark {
-    /* ... dark mode colors ... */
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 210 40% 98%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 212.7 26.8% 83.9%;
   }
 }
 
-/* --- Your custom base styles --- */
 @layer base {
   * {
     @apply border-border;
   }
-  /* Set default fonts from your draft */
   body {
-    font-family: var(--font-inter), sans-serif;
-    color: #1F2937; /* Dark text */
+    @apply bg-brand-cream text-brand-olive-dark dark:bg-carbon-grey dark:text-titanium;
   }
-
-  /* Poppins for headings, titles, CTAs */
-  h1, h2, h3, h4, h5, h6, .font-poppins, .gradient-logo, .footer-logo, .feature-card h3, .faq-toggle span, .cta-button {
-    font-family: var(--font-poppins), sans-serif;
+  /* Custom Selection Colors */
+  ::selection {
+    @apply bg-brand-sage text-white dark:bg-neon-blue dark:text-carbon-black;
   }
 }
 
-/* --- Your custom utility classes --- */
 @layer utilities {
-  /* Gradient text logo style */
-  .gradient-logo {
-    @apply bg-gradient-to-r from-brand-accent-dark to-brand-accent bg-clip-text text-transparent;
+  /* Hides scrollbar but allows scrolling */
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
   }
 
-  .footer-logo {
-    @apply bg-gradient-to-r from-brand-background to-brand-accent-lighter bg-clip-text text-transparent;
+  /* Smooth Masking for Dark Mode Gradients */
+  .mask-gradient-b {
+    mask-image: linear-gradient(to bottom, transparent, black 15%, black 85%, transparent);
+    -webkit-mask-image: linear-gradient(to bottom, transparent, black 15%, black 85%, transparent);
   }
 
-  /* Custom class for the nav link hover animation */
-  .nav-link-animated {
-    position: relative;
-    transition: color 0.3s ease;
+  .text-glow {
+    text-shadow: 0 0 20px rgba(77, 227, 255, 0.5);
   }
-
-  .nav-link-animated::after {
-    content: '';
-    position: absolute;
-    left: 0;
-    bottom: -4px;
-    width: 0;
-    height: 2px;
-    @apply bg-brand-accent;
-    transition: width 0.3s ease;
-  }
-
-  .nav-link-animated:hover::after {
-    width: 100%;
-  }
-
-  .nav-link-animated:hover {
-    @apply text-brand-accent;
-  }
-
-  /* Custom class for the "shine sweep" on feature cards */
-  .feature-card {
-    position: relative;
-    overflow: hidden;
-    @apply transition-transform duration-300 ease-in-out;
-  }
-
-  .feature-card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -150%;
-    width: 75%;
-    height: 100%;
-    background: linear-gradient(to right, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.5) 50%, rgba(255, 255, 255, 0) 100%);
-    transform: skewX(-25deg);
-    transition: left 0.75s ease-in-out;
-  }
-
-  .feature-card:hover::before {
-    left: 150%;
-  }
-
-  /* Hero Section Glow */
-  .hero-glow {
-    position: relative;
-    overflow: hidden;
-  }
-  .hero-glow::before {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 700px;
-    height: 700px;
-    background: radial-gradient(circle, rgba(39, 134, 100, 0.15) 0%, rgba(14, 165, 233, 0.1) 30%, transparent 70%);
-    filter: blur(100px);
-    z-index: 0;
-  }
-  .hero-content {
-    position: relative;
-    z-index: 1;
-  }
-
-  /* Scroll Fade-in Animation */
-  .fade-in-section {
-    opacity: 0;
-    transform: translateY(20px);
-    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
-  }
-  .fade-in-section.is-visible {
-    opacity: 1;
-    transform: translateY(0);
-  }
-
-  /* FAQ icon rotation */
-  .faq-icon.open {
-    transform: rotate(180deg);
-  }
-  .faq-icon {
-    transition: transform 0.3s ease;
-  }
-
-  /* --- NEW STYLES for Auth Pages --- */
-
-  /* Password Toggle Icon */
-  .password-toggle {
-    @apply absolute top-1/2 right-3 -translate-y-1/2 cursor-pointer text-gray-500 hover:text-gray-800;
-  }
-
-  /* Error Message */
-  .error-message {
-    @apply text-red-500 text-sm mt-2;
-  }
-
-  /* Password strength indicator */
-  .strength-bar-container {
-    @apply flex gap-1 h-2 mt-2;
-  }
-  .strength-bar {
-    @apply flex-grow bg-gray-200 rounded-full transition-colors;
-  }
-  .strength-bar.weak { @apply bg-red-500; }
-  .strength-bar.medium { @apply bg-amber-500; }
-  .strength-bar.strong { @apply bg-green-500; }
 }
