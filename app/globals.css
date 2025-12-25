@@ -1,6 +1,5 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@config "../tailwind.config.ts";
+@import "tailwindcss";
 
 @layer base {
   :root {
@@ -70,32 +69,59 @@
   * {
     @apply border-border;
   }
+
   body {
-    @apply bg-brand-cream text-brand-olive-dark dark:bg-carbon-grey dark:text-titanium;
-  }
-  /* Custom Selection Colors */
-  ::selection {
-    @apply bg-brand-sage text-white dark:bg-neon-blue dark:text-carbon-black;
+    @apply bg-background text-foreground;
   }
 }
 
-@layer utilities {
-  /* Hides scrollbar but allows scrolling */
-  .no-scrollbar::-webkit-scrollbar {
-    display: none;
-  }
-  .no-scrollbar {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
-  }
+/* Remove arrows from number input */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
 
-  /* Smooth Masking for Dark Mode Gradients */
-  .mask-gradient-b {
-    mask-image: linear-gradient(to bottom, transparent, black 15%, black 85%, transparent);
-    -webkit-mask-image: linear-gradient(to bottom, transparent, black 15%, black 85%, transparent);
-  }
+input[type="number"] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
 
-  .text-glow {
-    text-shadow: 0 0 20px rgba(77, 227, 255, 0.5);
-  }
+/* Fix transparent background for input in Safari */
+input {
+  background-color: transparent;
+}
+
+/* Fix date picker icon visibility */
+input[type="date"]::-webkit-calendar-picker-indicator {
+  opacity: 1;
+  filter: invert(0);
+}
+
+.dark input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+}
+
+/* Fix smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Disable overscroll */
+body {
+  overscroll-behavior: none;
+}
+
+/* Smooth Masking for Dark Mode Gradient */
+.dark {
+  --mask-gradient: radial-gradient(
+    ellipse at top,
+    rgba(0, 0, 0, 0.8) 0%,
+    rgba(0, 0, 0, 1) 70%
+  );
+}
+
+.gradient-mask {
+  mask-image: var(--mask-gradient);
+  -webkit-mask-image: var(--mask-gradient);
 }
