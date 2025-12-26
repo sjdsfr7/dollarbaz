@@ -80,7 +80,7 @@ export function TransferForm({ accounts }: { accounts: Account[] }) {
                   </option>
                 ))}
             </select>
-            <CaretDown className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-muted-foreground" />
+            <CaretDownIcon className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-muted-foreground" />
           </div>
         </div>
       </div>
