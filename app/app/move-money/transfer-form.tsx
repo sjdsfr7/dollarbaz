@@ -1,14 +1,14 @@
 'use client';
 
 import { useState } from 'react';
-// @ts-ignore - Temporary ignore for action type import
 import { useFormState } from 'react-dom';
 import { processTransfer } from './actions';
 import {
-  CheckCircle,
-  Warning,
-  CaretDown,
-  PaperPlaneRight,
+  CheckCircleIcon,
+  WarningIcon,
+  CaretDownIcon,
+  PaperPlaneRightIcon,
+  ArrowsLeftRightIcon,
 } from '@phosphor-icons/react/dist/ssr';
 
 // Basic Account Type
@@ -53,13 +53,13 @@ export function TransferForm({ accounts }: { accounts: Account[] }) {
                 </option>
               ))}
             </select>
-            <CaretDown className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-muted-foreground" />
+            <CaretDownIcon className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-muted-foreground" />
           </div>
         </div>
 
         {/* Center Arrow */}
         <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10 hidden md:flex w-8 h-8 rounded-full bg-white dark:bg-[#1a232e] shadow border border-black/10 items-center justify-center">
-          <ArrowsLeftRight size={14} />
+          <ArrowsLeftRightIcon size={14} />
         </div>
 
         {/* TO */}
@@ -138,13 +138,13 @@ export function TransferForm({ accounts }: { accounts: Account[] }) {
       {/* 4. FEEDBACK & SUBMIT */}
       {state?.error && (
         <div className="p-3 rounded-lg bg-rose-100 dark:bg-rose-900/20 text-rose-600 text-sm flex items-center gap-2">
-          <Warning size={18} /> {state.error}
+          <WarningIcon size={18} /> {state.error}
         </div>
       )}
 
       {state?.success && (
         <div className="p-3 rounded-lg bg-emerald-100 dark:bg-emerald-900/20 text-emerald-600 text-sm flex items-center gap-2">
-          <CheckCircle size={18} /> Transfer successful!
+          <CheckCircleIcon size={18} /> Transfer successful!
         </div>
       )}
 
@@ -152,7 +152,7 @@ export function TransferForm({ accounts }: { accounts: Account[] }) {
         type="submit"
         className="w-full py-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-lg shadow-lg shadow-emerald-600/20 transition-all flex items-center justify-center gap-2"
       >
-        <PaperPlaneRight size={20} weight="fill" />
+        <PaperPlaneRightIcon size={20} weight="fill" />
         Transfer Funds
       </button>
     </form>
